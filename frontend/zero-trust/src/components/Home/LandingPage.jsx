@@ -1,8 +1,10 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { motion } from "motion/react";
 import { World } from "../ui/globe";
 import { HoverBorderGradientDemo } from "./Button";
 import { TextGenerateEffectDemo } from "./Text";
+import "./style.css";
+import { FloatingMessages } from "./FloatingMessages";
 
 export function GlobeDemo() {
   const globeConfig = {
@@ -401,9 +403,17 @@ export function GlobeDemo() {
         <div className="absolute w-[70%] h-[70%] bg-purple-400/50 rounded-full filter blur-3xl animate-blob animation-delay-4000 top-1/2 left-1/4"></div>
       </div>
 
+      {/* Floating messages */}
+      <div className="fixed inset-0 pointer-events-none z-50">
+        <FloatingMessages/>
+      </div>
+
       {/* Top-right button */}
       <div className="absolute top-6 right-6 z-50">
         <HoverBorderGradientDemo />
+      </div>
+      <div className="absolute top-6 left-6 z-50">
+        <img src="lock.png" alt="lock" className="w-8 h-8" />
       </div>
 
       <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4">
@@ -413,16 +423,20 @@ export function GlobeDemo() {
           transition={{ duration: 1 }}
           className="div"
         >
-          <h2 className="text-center text-xl md:text-4xl font-bold text-black dark:text-white">
+          <h2
+            className="text-center text-1xl md:text-6xl font-bold text-black dark:text-white"
+            style={{ fontFamily: "'Press Start 2P', monospace" }}
+          >
             Zero Trust
           </h2>
+
           <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto">
-            <TextGenerateEffectDemo/>
+            <TextGenerateEffectDemo />
           </p>
         </motion.div>
 
         <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-40" />
-        <div className="absolute w-full -bottom-20 h-72 md:h-full z-10">
+        <div className="absolute w-full -bottom-20 h-7 md:h-full z-10">
           <World data={sampleArcs} globeConfig={globeConfig} />
         </div>
       </div>
