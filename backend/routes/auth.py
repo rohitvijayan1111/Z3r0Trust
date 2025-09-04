@@ -1,43 +1,33 @@
 from flask import Blueprint, request, jsonify
-from models.user import create_user, get_user_by_email
-import bcrypt
-import jwt
+from descope import DescopeClient
 import os
-from datetime import datetime, timedelta
 
-auth = Blueprint('auth', __name__)
-JWT_SECRET = os.getenv("JWT_SECRET")
+# Create Blueprint
+auth = Blueprint("auth", __name__)
 
-@auth.route('/signup', methods=['POST'])
-def signup():
+# Initialize Descope client
+descope_client = DescopeClient(project_id="P32DvqStnvlzxBbYFSmAYq74fsPQ")
+
+# Session validation helper
+def validate_descope_session(session_token):
+    try:
+        jwt_response = descope_client.validate_session(session_token=session_token)
+        return jwt_response.user
+    except Exception as e:
+        return None
+
+# Example route
+@auth.route("/validate-session", methods=["POST"])
+def validate_session_route():
     data = request.json
-    first_name = data.get('first_name')
-    last_name = data.get('last_name')
-    email = data.get('email')
-    password = data.get('password')
+    token = data.get("sessionToken")
+    
+    if not token:
+        return jsonify({"error": "No session token provided"}), 400
 
-    if get_user_by_email(email):
-        return jsonify({"message": "User already exists"}), 400
-
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    create_user(first_name, last_name, email, hashed_password)
-    return jsonify({"message": "User created successfully"}), 201
-
-@auth.route('/login', methods=['POST'])
-def login():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
-
-    user = get_user_by_email(email)
+    user = validate_descope_session(token)
+    
     if not user:
-        return jsonify({"message": "User not found"}), 404
+        return jsonify({"error": "Invalid session"}), 401
 
-    if bcrypt.checkpw(password.encode('utf-8'), user[4].encode('utf-8')):
-        token = jwt.encode({
-            "user_id": user[0],
-            "exp": datetime.utcnow() + timedelta(hours=24)
-        }, JWT_SECRET, algorithm="HS256")
-        return jsonify({"token": token}), 200
-    else:
-        return jsonify({"message": "Invalid password"}), 401
+    return jsonify({"user": user})
