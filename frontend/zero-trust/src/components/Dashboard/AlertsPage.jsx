@@ -74,6 +74,7 @@ export function AlertsPage() {
                 "Action",
                 "Status",
                 "Failed Count",
+                "Summary", // ✅ New Column
                 "Block IP",
                 "Block User",
               ].map((header) => (
@@ -136,6 +137,7 @@ export function AlertsPage() {
                 <td className="px-4 py-3 text-sm text-black dark:text-white">
                   {alert.failed_count}
                 </td>
+                <td className="px-4 py-3 text-sm text-black dark:text-white"></td>
                 {/* Block IP Button */}
                 <td className="px-4 py-3">
                   <button
