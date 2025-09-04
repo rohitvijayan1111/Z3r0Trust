@@ -1,5 +1,5 @@
 [project]
-name = "mail_mcp_server"
+name = "mail-mcp-server"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
