@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.7",
     "@react-three/drei": "^10.7.4",
     "@react-three/fiber": "^9.3.0",
+    "@tabler/icons-react": "^3.34.1",
     "@tailwindcss/vite": "^4.1.12",
     "@tsparticles/engine": "^3.9.1",
     "@tsparticles/react": "^3.0.0",

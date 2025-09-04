@@ -16,18 +16,15 @@ export function FloatingMessages() {
   useEffect(() => {
     const interval = setInterval(() => {
       const randomMessage =
-        projectMessages[Math.floor(Math.random() * projectMessages.length)];
+        projectMessages[Math.floor(Math.random() * projectMessages.length)+1];
       const id = Date.now();
-      const top = Math.random() * 80; // vertical position
+      const top = Math.random() * 10; // vertical position
       const left = Math.random() * 70; // horizontal position
-
       setMessages((prev) => [...prev, { id, text: randomMessage, top, left }]);
-
       setTimeout(() => {
         setMessages((prev) => prev.filter((msg) => msg.id !== id));
       }, 4000);
     }, 2500); // slightly slower interval for readability
-
     return () => clearInterval(interval);
   }, []);
 
