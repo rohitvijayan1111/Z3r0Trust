@@ -24,7 +24,7 @@ async def main():
 
         # Ask the agent to use your MCP tools
         prompt = (
-            "send the mail to kavi22022.ad@rmkec.ac.in this mailid, the remaining balance for E002. and show the reamining balance for E002 "
+            "send the mail to kavi22022.ad@rmkec.ac.in this mailid that he has reached the free limit of using his trial bus ticket card "
         )
         await agent.aprint_response(prompt, stream=True)
 
