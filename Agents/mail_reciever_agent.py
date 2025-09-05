@@ -24,7 +24,7 @@
 
 #         # Ask the agent to use your MCP tools
 #         prompt = (
-#             "send the mail to kavi22022.ad@rmkec.ac.in this mailid that he has reached the free limit of using his trial bus ticket card "
+#             "show the last 5 recent mails for the mail id kavirajmetech@gmail.com"
 #         )
 #         await agent.aprint_response(prompt, stream=True)
 
@@ -73,6 +73,7 @@ async def test_server():
         result = await client.call_tool("subtract", {"a": 10, "b": 3, "token": token['jwt']})
         print(f"<<< Result: {result[0].text}")
         # print("Auth result:", auth_result[0].text)
+
 
 if __name__ == "__main__":
     asyncio.run(test_server())

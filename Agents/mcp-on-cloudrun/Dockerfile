@@ -8,13 +8,16 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY . /app
 WORKDIR /app
 
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 # Allow statements and log messages to immediately appear in the logs
 ENV PYTHONUNBUFFERED=1
 
 # Install dependencies
 RUN uv sync
 
-EXPOSE $PORT
+EXPOSE 8080
 
 # Run the FastMCP server
 CMD ["uv", "run", "server.py"]

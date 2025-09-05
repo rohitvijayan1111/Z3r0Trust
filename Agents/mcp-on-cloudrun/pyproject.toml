@@ -4,5 +4,9 @@ version = "0.1.0"
 description = "Example of deploying a MCP server on Cloud Run"
 requires-python = ">=3.10"
 dependencies = [
+    "descope>=1.7.9",
+    "fastapi>=0.116.1",
     "fastmcp==2.6.1",
+    "groq>=0.31.1",
+    "phidata>=2.7.10",
 ]
