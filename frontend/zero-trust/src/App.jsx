@@ -9,6 +9,8 @@ import { EvervaultCardDemo } from './components/Dashboard/EvervaultCardDemo';
 import { AlertsPage } from './components/Dashboard/AlertsPage';
 import ResponsesPage from './components/Dashboard/ResponsesPage';
 import { SignupFormDemo1 } from './components/Signup and Login/SignupFormDemo';
+import { FeaturesSectionDemo } from './components/Attack/FeaturesSectionDemo';
+import { AppealPage } from './components/Dashboard/AppealPage';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/alerts" element={<AlertsPage />} />
         <Route path="/responses" element={<ResponsesPage />} />
         <Route path="/auth" element={<SignupFormDemo1 />} />
+        <Route path="/beginAttack" element={<FeaturesSectionDemo />} />
+        <Route path="/appeal" element={<AppealPage />} />
       </Routes>
     </>
   );

@@ -1,32 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
-// Sample response data
-const responseData = [
-  {
-    id: 17,
-    alert_name: "Suspicious Login",
-    confidence_score: "medium",
-    timestamp: "2025-09-04T08:00:00Z",
-    user: "alice",
-    email: "alice@example.com",
-    ip: "203.0.113.45",
-    location: "New York, USA",
-    device: "Windows 10 / Chrome",
-    action: "login_attempt",
-    status: "suspended",
-    failed_count: 5,
-  },
-  // Add more response objects here
-];
+import axios from "axios";
 
 export default function ResponsesPage() {
-  return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black px-4 py-12">
-      <div className="absolute top-6 left-6 z-50">
-        <img src="/lock.png" alt="lock" className="w-8 h-8" />
-      </div>
+  const [responses, setResponses] = useState([]);
+  const API_BASE = "http://127.0.0.1:5000/api";
 
+  useEffect(() => {
+    fetchResponses();
+  }, []);
+
+  const fetchResponses = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/responses`, {
+        withCredentials: true,
+      });
+      setResponses(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching responses:", err);
+      setResponses([]);
+    }
+  };
+
+  const handleUndo = async (id) => {
+    try {
+      await axios.put(
+        `${API_BASE}/responses/${id}/undo`,
+        {},
+        { withCredentials: true }
+      );
+      setResponses((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, status: "active" } : item
+        )
+      );
+    } catch (err) {
+      console.error("Error updating response:", err);
+    }
+  };
+
+  return (
+    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black">
       <h1 className="text-2xl sm:text-3xl font-bold dark:text-white text-black mb-6">
         Responses
       </h1>
@@ -59,7 +73,7 @@ export default function ResponsesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {responseData.map((item, index) => (
+            {responses.map((item, index) => (
               <motion.tr
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -77,7 +91,7 @@ export default function ResponsesPage() {
                   {new Date(item.timestamp).toLocaleString()}
                 </td>
                 <td className="px-4 py-2 text-sm dark:text-white">
-                  {item.user}
+                  {item.user_name}
                 </td>
                 <td className="px-4 py-2 text-sm dark:text-white">
                   {item.email}
@@ -106,11 +120,15 @@ export default function ResponsesPage() {
                 <td className="px-4 py-2 text-sm dark:text-white">
                   {item.failed_count}
                 </td>
-                {/* Static Undo Button */}
                 <td className="px-4 py-2">
-                  <button className="w-full px-3 py-1 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition">
-                    Undo
-                  </button>
+                  {item.status === "suspended" && (
+                    <button
+                      onClick={() => handleUndo(item.id)}
+                      className="w-full px-3 py-1 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition"
+                    >
+                      Undo
+                    </button>
+                  )}
                 </td>
               </motion.tr>
             ))}

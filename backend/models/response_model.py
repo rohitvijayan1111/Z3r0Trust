@@ -15,18 +15,19 @@ class Response:
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
             cursor.execute(query, (
-                response_data.get("alert_name"),
-                response_data.get("confidence_score"),
-                response_data.get("timestamp", datetime.utcnow()),
-                response_data.get("user"),
-                response_data.get("email"),
-                response_data.get("ip"),
-                response_data.get("location"),
-                response_data.get("device"),
-                response_data.get("action"),
-                response_data.get("status"),
-                response_data.get("failed_count", 0)
-            ))
+    response_data.get("alert_name"),
+    response_data.get("confidence_score"),
+    response_data.get("timestamp", datetime.utcnow()),
+    response_data.get("user_name"),  # ✅ fix here
+    response_data.get("email"),
+    response_data.get("ip"),
+    response_data.get("location"),
+    response_data.get("device"),
+    response_data.get("action"),
+    response_data.get("status"),
+    response_data.get("failed_count", 0)
+))
+
             conn.commit()
             return True
         except Exception as e:

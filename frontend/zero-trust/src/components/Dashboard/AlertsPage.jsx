@@ -1,174 +1,119 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
-const alertsDataInitial = [
-  {
-    id: 17,
-    alert_name: "Suspicious Login",
-    confidence_score: "medium",
-    timestamp: "2025-09-04T08:00:00Z",
-    user: "alice",
-    email: "alice@example.com",
-    ip: "203.0.113.45",
-    location: "New York, USA",
-    device: "Windows 10 / Chrome",
-    action: "login_attempt",
-    status: "suspended",
-    failed_count: 5,
-    blockedIP: false,
-    blockedUser: false,
-  },
-  // You can add more alerts here
-];
+import axios from "axios";
 
 export function AlertsPage() {
-  const [alertsData, setAlertsData] = useState(alertsDataInitial);
+  const [alertsData, setAlertsData] = useState([]);
+  const API_BASE = "http://127.0.0.1:5000/api";
 
-  const toggleBlockIP = (id) => {
-    setAlertsData((prev) =>
-      prev.map((alert) =>
-        alert.id === id ? { ...alert, blockedIP: !alert.blockedIP } : alert
-      )
-    );
+  useEffect(() => {
+    fetchAlerts();
+  }, []);
+
+  const fetchAlerts = async () => {
+    try {
+      const res = await axios.get(`${API_BASE}/alerts`);
+      setAlertsData(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching alerts:", err);
+      setAlertsData([]);
+    }
   };
 
-  const toggleBlockUser = (id) => {
-    setAlertsData((prev) =>
-      prev.map((alert) =>
-        alert.id === id ? { ...alert, blockedUser: !alert.blockedUser } : alert
-      )
-    );
+  const handleToggleBlockIP = async (alert) => {
+    try {
+      if (alert.blockedIP) {
+        // Call undo endpoint
+        await axios.put(`${API_BASE}/responses/${alert.response_id}/undo`);
+      } else {
+        // Call block endpoint
+        await axios.put(`${API_BASE}/responses/${alert.response_id}/block`);
+      }
+      fetchAlerts();
+    } catch (err) {
+      console.error("Error toggling block IP:", err);
+    }
+  };
+
+  const handleToggleBlockUser = async (alert) => {
+    try {
+      if (alert.blockedUser) {
+        // Call undo endpoint
+        await axios.put(`${API_BASE}/responses/${alert.response_id}/undo`);
+      } else {
+        // Call block endpoint
+        await axios.put(`${API_BASE}/responses/${alert.response_id}/block`);
+      }
+      fetchAlerts();
+    } catch (err) {
+      console.error("Error toggling block User:", err);
+    }
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black px-4 py-12">
-      {/* Top-left Lock Icon */}
-      <div className="absolute top-6 left-6 z-50">
-        <img src="/lock.png" alt="lock" className="w-8 h-8" />
-      </div>
-
-      {/* Page Heading */}
-      <h1 className="text-1xl sm:text-3xl font-extrabold dark:text-white text-black mb-6">
+    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black p-6">
+      <h1 className="text-3xl font-extrabold dark:text-white text-black mb-8">
         Security Alerts
       </h1>
 
-      {/* Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="w-full max-w-7xl overflow-x-auto"
-      >
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-700 rounded-xl overflow-hidden">
-          <thead className="bg-gray-200 dark:bg-zinc-800">
-            <tr>
-              {[
-                "Alert Name",
-                "Confidence Score",
-                "Timestamp",
-                "User",
-                "Email",
-                "IP",
-                "Location",
-                "Device",
-                "Action",
-                "Status",
-                "Failed Count",
-                "Summary", // ✅ New Column
-                "Block IP",
-                "Block User",
-              ].map((header) => (
-                <th
-                  key={header}
-                  className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300"
+      <div className="w-full max-w-5xl space-y-4">
+        {alertsData.map((alert, index) => (
+          <motion.div
+            key={alert.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.4 }}
+            className="bg-white dark:bg-zinc-900 rounded-xl p-4 shadow-md flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4"
+          >
+            <div className="flex-1">
+              <p className="font-semibold dark:text-white">
+                {alert.alert_name}{" "}
+                <span
+                  className={`px-2 py-1 rounded-full text-xs ml-2 ${
+                    alert.status === "suspended"
+                      ? "bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200"
+                      : "bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200"
+                  }`}
                 >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-700">
-            {alertsData.map((alert, index) => (
-              <motion.tr
-                key={alert.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05, duration: 0.4 }}
-                className="hover:bg-gray-50 dark:hover:bg-zinc-800 transition"
+                  {alert.status}
+                </span>
+              </p>
+              <p className="text-sm dark:text-gray-300">
+                Confidence: {alert.confidence_score} | User: {alert.user_name} |
+                IP: {alert.ip}
+              </p>
+              <p className="text-sm dark:text-gray-300">
+                Email: {alert.email} | Device: {alert.device} | Action:{" "}
+                {alert.action}
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleToggleBlockIP(alert)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  alert.blockedIP
+                    ? "bg-red-600 text-white hover:bg-red-700"
+                    : "bg-green-600 text-white hover:bg-green-700"
+                }`}
               >
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {alert.alert_name}
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {alert.confidence_score}
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {new Date(alert.timestamp).toLocaleString()}
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {alert.user}
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {alert.email}
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {alert.ip}
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {alert.location}
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {alert.device}
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {alert.action}
-                </td>
-                <td className="px-4 py-3 text-sm font-semibold">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      alert.status === "suspended"
-                        ? "bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-200"
-                        : "bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200"
-                    }`}
-                  >
-                    {alert.status}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white">
-                  {alert.failed_count}
-                </td>
-                <td className="px-4 py-3 text-sm text-black dark:text-white"></td>
-                {/* Block IP Button */}
-                <td className="px-4 py-3">
-                  <button
-                    onClick={() => toggleBlockIP(alert.id)}
-                    className={`w-full px-3 py-1 rounded-lg text-sm font-medium transition ${
-                      alert.blockedIP
-                        ? "bg-red-600 text-white hover:bg-red-700"
-                        : "bg-green-600 text-white hover:bg-green-700"
-                    }`}
-                  >
-                    {alert.blockedIP ? "Unblock IP" : "Block IP"}
-                  </button>
-                </td>
-                {/* Block User Button */}
-                <td className="px-4 py-3">
-                  <button
-                    onClick={() => toggleBlockUser(alert.id)}
-                    className={`w-full px-3 py-1 rounded-lg text-sm font-medium transition ${
-                      alert.blockedUser
-                        ? "bg-red-600 text-white hover:bg-red-700"
-                        : "bg-green-600 text-white hover:bg-green-700"
-                    }`}
-                  >
-                    {alert.blockedUser ? "Unblock User" : "Block User"}
-                  </button>
-                </td>
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
-      </motion.div>
+                {alert.blockedIP ? "Unblock IP" : "Block IP"}
+              </button>
+
+              <button
+                onClick={() => handleToggleBlockUser(alert)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  alert.blockedUser
+                    ? "bg-red-600 text-white hover:bg-red-700"
+                    : "bg-green-600 text-white hover:bg-green-700"
+                }`}
+              >
+                {alert.blockedUser ? "Unblock User" : "Block User"}
+              </button>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }

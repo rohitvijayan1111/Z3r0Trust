@@ -5,14 +5,14 @@ import { motion } from "framer-motion";
 
 export function EvervaultCardDemo() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black px-4 sm:px-6 lg:px-12 py-12">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black px-4 sm:px-6 lg:px-12 py-12 relative">
       {/* Top-left Lock Icon */}
       <div className="absolute top-6 left-6 z-50">
         <img src="lock.png" alt="lock" className="w-8 h-8" />
       </div>
 
       {/* Cards */}
-      <div className="flex flex-col sm:flex-row gap-8 w-full max-w-6xl">
+      <div className="flex flex-col sm:flex-row gap-8 justify-center items-center w-full max-w-6xl">
         <CardWrapper
           title="Alerts"
           description="Stay informed with instant security alerts to keep your data protected."
@@ -24,6 +24,12 @@ export function EvervaultCardDemo() {
           description="Easily manage and respond to notifications with one click."
           buttonText="Get Responses"
           route="/responses"
+        />
+        <CardWrapper
+          title="Appeal"
+          description="Submit or track appeals for any alerts or responses easily."
+          buttonText="Go to Appeal"
+          route="/appeal"
         />
       </div>
     </div>
@@ -39,7 +45,7 @@ const CardWrapper = ({ title, description, buttonText, route }) => {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="flex flex-col items-start w-full sm:w-1/2 max-w-sm mx-auto p-6 relative rounded-xl bg-white/5 dark:bg-zinc-900/50 backdrop-blur-md shadow-lg border border-black/[0.2] dark:border-white/[0.2]"
+      className="flex flex-col items-start w-full sm:w-1/3 max-w-sm p-6 relative rounded-xl bg-white/5 dark:bg-zinc-900/50 backdrop-blur-md shadow-lg border border-black/[0.2] dark:border-white/[0.2]"
     >
       {/* Corners */}
       <Icon className="absolute h-6 w-6 -top-3 -left-3 dark:text-white text-black" />
