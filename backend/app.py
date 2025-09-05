@@ -4,9 +4,11 @@ from routes.auth import auth
 from db import app as db_app  # your MySQL connection app
 from routes.alerts import alerts_bp
 from routes.responses import responses_bp
+from flask_cors import CORS
 
 app = db_app
-CORS(app)  # Allow all origins for now
+CORS(app, resources={r"/*": {"origins": ["http://localhost:5173"]}}, supports_credentials=True)
+  # Allow all origins for now
 
 app.register_blueprint(auth, url_prefix='/api/auth')
 

@@ -1,13 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "../../lib/utils";
 import { motion } from "framer-motion";
 
 export function SignupFormDemo1() {
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Login submitted");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, request_type: "web" }),
+      });
+
+
+      const result = await response.json();
+      console.log("Flask backend response:", result);
+
+      if (result.status === "success") {
+        setMessage("✅ Login successful!");
+        localStorage.setItem("session_jwt", result.session_jwt);
+      } else {
+        setMessage("❌ " + (result.message || "Login failed"));
+      }
+    } catch (err) {
+      console.error("Error calling backend:", err);
+      setMessage("❌ Backend unavailable.");
+    }
   };
 
   return (
@@ -35,12 +61,24 @@ export function SignupFormDemo1() {
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <LabelInputContainer>
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" placeholder="you@example.com" type="email" />
+              <Input
+                id="email"
+                placeholder="you@example.com"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </LabelInputContainer>
 
             <LabelInputContainer>
               <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="••••••••" type="password" />
+              <Input
+                id="password"
+                placeholder="••••••••"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </LabelInputContainer>
 
             <button
@@ -51,6 +89,10 @@ export function SignupFormDemo1() {
               <BottomGradient />
             </button>
           </form>
+
+          {message && (
+            <p className="mt-4 text-center text-sm text-red-500">{message}</p>
+          )}
         </motion.div>
       </div>
     </div>

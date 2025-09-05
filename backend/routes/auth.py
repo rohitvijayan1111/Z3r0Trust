@@ -1,33 +1,29 @@
 from flask import Blueprint, request, jsonify
-from descope import DescopeClient
-import os
+import requests
 
-# Create Blueprint
 auth = Blueprint("auth", __name__)
 
-# Initialize Descope client
-descope_client = DescopeClient(project_id="P32DvqStnvlzxBbYFSmAYq74fsPQ")
+FASTAPI_LOGIN_URL = "http://localhost:8000/login-with-email"
 
-# Session validation helper
-def validate_descope_session(session_token):
-    try:
-        jwt_response = descope_client.validate_session(session_token=session_token)
-        return jwt_response.user
-    except Exception as e:
-        return None
-
-# Example route
-@auth.route("/validate-session", methods=["POST"])
-def validate_session_route():
+@auth.route("/login", methods=["POST"])
+def login_user():
     data = request.json
-    token = data.get("sessionToken")
-    
-    if not token:
-        return jsonify({"error": "No session token provided"}), 400
+    email = data.get("email")
+    password = data.get("password")
+    request_type = data.get("request_type", "web")
 
-    user = validate_descope_session(token)
-    
-    if not user:
-        return jsonify({"error": "Invalid session"}), 401
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
 
-    return jsonify({"user": user})
+    try:
+        response = requests.post(
+            FASTAPI_LOGIN_URL,
+            json={"email": email, "password": password, "request_type": request_type},
+            timeout=5
+        )
+        fastapi_result = response.json()
+        print("FastAPI Login Response:", fastapi_result)
+        return jsonify(fastapi_result)
+    except Exception as e:
+        print("Error calling FastAPI login:", str(e))
+        return jsonify({"error": "Login service unavailable"}), 503
