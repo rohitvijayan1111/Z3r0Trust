@@ -35,7 +35,7 @@ async def test_server():
         print(f"<<< Result: {result[0].text}")
         # print("Auth result:", auth_result[0].text)
 
-        result = await client.call_tool("send_email_to_employees", {"email_id":"kavi22022.ad@rmkec.ac.in", "message":"tomorrow is declared as an holiday for exam preparation, send this mail to kavi22022.ad@rmkec.ac.in"})
+        result = await client.call_tool("send_email_to_employees", {"email_id":"diva22022.it@rmkec.ac.in", "message":"tomorrow is declared as an holiday for exam preparation, send this mail to diva22022.it@rmkec.ac.in"})
         print(f"<<< Result: {result[0].text}")
 
 if __name__ == "__main__":

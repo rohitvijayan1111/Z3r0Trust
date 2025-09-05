@@ -32,24 +32,16 @@
 #     import asyncio
 #     asyncio.run(main())
 
-
 import asyncio
 from fastmcp import Client
 from descope import DescopeClient
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ✅ Init Descope client
-descope = DescopeClient(project_id="P32GTfUg5UE6jTwQNzhPJzQXDhf2")
 
-def get_token():
-    # Replace with your real login flow
-    resp = descope.password.sign_in(
-        login_id="kavirajtechpersonal@gmail.com",
-        password="12345678Ab@"  # (fix: 'code' → 'password')
-    )
-    return resp["sessionToken"]
-
-token = get_token()
-print(token['jwt'])
 
 
 async def test_server():
@@ -65,15 +57,20 @@ async def test_server():
         for tool in tools:
             print(f">>> Tool found: {tool.name}")
         # Call add tool
+        result=await client.call_tool("authenticator",{"access_key":os.getenv("DESCOPE_ACCESS_KEY")})
+        print(result[0])
+
         print(">>>  Calling add tool for 1 + 2")
-        result = await client.call_tool("add", {"a": 1, "b": 2, "token": token['jwt']})
+        result = await client.call_tool("add", {"a": 1, "b": 2})
         print(f"<<<  Result: {result[0].text}")
         # Call subtract tool
         print(">>>  Calling subtract tool for 10 - 3")
-        result = await client.call_tool("subtract", {"a": 10, "b": 3, "token": token['jwt']})
+        result = await client.call_tool("subtract", {"a": 10, "b": 3})
         print(f"<<< Result: {result[0].text}")
         # print("Auth result:", auth_result[0].text)
 
+        result = await client.call_tool("send_email_to_employees", {"email_id":"kavi22022.ad@rmkec.ac.in", "message":"tomorrow is declared as an holiday for exam preparation, send this mail to kavi22022.ad@rmkec.ac.in"})
+        print(f"<<< Result: {result[0].text}")
 
 if __name__ == "__main__":
     asyncio.run(test_server())

@@ -1,79 +1,61 @@
-# # agent.py
+# import asyncio
+# from fastmcp import Client
+# from descope import DescopeClient
 # import os
-# from agno.agent import Agent
-# from agno.tools.mcp import MCPTools
-# from agno.models.openai import OpenAIChat
+# from dotenv import load_dotenv
 
-# GROQ_BASE = "https://api.groq.com/openai/v1"
+# load_dotenv()
 
-# async def main():
-#     # Launch your MCP server as a subprocess via stdio
-#     # (adjust the command if your server file is not main.py)
-#     async with MCPTools(command="python mail_mcp_server/main.py", timeout_seconds=60) as mcp_tools:
-#         agent = Agent(
-#             # Pick a Groq model; example: Llama 3.3 70B versatile
-#             model= OpenAIChat(
-#                 id="llama-3.3-70b-versatile",   # Groq model name
-#                 base_url="https://api.groq.com/openai/v1",
-#                 api_key=os.environ["GROQ_API_KEY"],
-#             )
-# ,
-#             tools=[mcp_tools],
-#             markdown=True,
-#         )
+# async def test_server():
 
-#         # Ask the agent to use your MCP tools
-#         prompt = (
-#             "send the mail to kavi22022.ad@rmkec.ac.in this mailid that he has reached the free limit of using his trial bus ticket card "
-#         )
-#         await agent.aprint_response(prompt, stream=True)
+#     async with Client("http://localhost:8080/mcp") as client:
+#         # ✅ Call authenticator
+#         # auth_result = await client.call_tool("authenticator", {"token": token})
+
+#         tools = await client.list_tools()
+#         for tool in tools:
+#             print(f">>> Tool found: {tool.name}")
+#         # Call add tool
+#         result=await client.call_tool("authenticator",{"access_key":os.getenv("DESCOPE_ACCESS_KEY")})
+#         print(result[0])
+
+#         result = await client.call_tool("send_email_to_employees", {"email_id":"kavi22022.ad@rmkec.ac.in", "message":"tomorrow is declared as an holiday for exam preparation, send this mail to kavi22022.ad@rmkec.ac.in"})
+#         print(f"<<< Result: {result[0].text}")
 
 # if __name__ == "__main__":
-#     import asyncio
-#     asyncio.run(main())
-
+#     asyncio.run(test_server())
 
 import asyncio
 from fastmcp import Client
-from descope import DescopeClient
+import os
+from dotenv import load_dotenv
+import sys
 
-# ✅ Init Descope client
-descope = DescopeClient(project_id="P32GTfUg5UE6jTwQNzhPJzQXDhf2")
+load_dotenv()
 
-def get_token():
-    # Replace with your real login flow
-    resp = descope.password.sign_in(
-        login_id="kavirajtechpersonal@gmail.com",
-        password="12345678Ab@"  # (fix: 'code' → 'password')
-    )
-    return resp["sessionToken"]
-
-token = get_token()
-print(token['jwt'])
-
-
-async def test_server():
-
-   
-    
-
+async def test_server(email_id, message):
     async with Client("http://localhost:8080/mcp") as client:
-        # ✅ Call authenticator
-        # auth_result = await client.call_tool("authenticator", {"token": token})
-
         tools = await client.list_tools()
         for tool in tools:
             print(f">>> Tool found: {tool.name}")
-        # Call add tool
-        print(">>>  Calling add tool for 1 + 2")
-        result = await client.call_tool("add", {"a": 1, "b": 2, "token": token['jwt']})
-        print(f"<<<  Result: {result[0].text}")
-        # Call subtract tool
-        print(">>>  Calling subtract tool for 10 - 3")
-        result = await client.call_tool("subtract", {"a": 10, "b": 3, "token": token['jwt']})
+
+        # Call authenticator
+        result = await client.call_tool("authenticator", {"access_key": os.getenv("DESCOPE_ACCESS_KEY")})
+        print(result[0])
+
+        # Send email
+        result = await client.call_tool(
+            "send_email_to_employees", 
+            {"email_id": email_id, "message": message}
+        )
         print(f"<<< Result: {result[0].text}")
-        # print("Auth result:", auth_result[0].text)
 
 if __name__ == "__main__":
-    asyncio.run(test_server())
+    if len(sys.argv) < 3:
+        print("Usage: python send_email.py <email_id> <message>")
+        sys.exit(1)
 
+    email_arg = sys.argv[1]
+    message_arg = sys.argv[2]
+
+    asyncio.run(test_server(email_arg, message_arg))
