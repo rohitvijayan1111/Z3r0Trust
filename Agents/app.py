@@ -135,9 +135,9 @@ def webhook():
 
 
 # --------- Background tasks ---------
-@app.before_first_request
-def start_background_tasks():
-    asyncio.create_task(cache_cleaner())
+# @app.before_first_request
+# def start_background_tasks():
+#     asyncio.create_task(cache_cleaner())
 
 
 
