@@ -10,10 +10,15 @@ import asyncio
 from app_helper_functions import apply_policy 
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from typing import Optional
-from app_helper_functions import apply_policy
 import httpx
 import requests
+from typing import Optional
+
+from db_controller_agent import db_controller_agent
+from app_helper_functions import apply_policy
+from alert_handler_agent import alert_handler_agent
+from mail_sender_agent import mail_sender_agent
+
 
 load_dotenv()
 
@@ -40,12 +45,10 @@ class EmailRequest(BaseModel):
     email_id: str
     message: str
 
-
 # --------- Health check ---------
 @app.get("/")
 def hello():
     return {"message": "Hello MCP!"}
-
 
 # --------- List available tools ---------
 @app.get("/tools")
@@ -55,21 +58,11 @@ async def list_tools():
         tool_names = [tool.name for tool in tools]
         return {"tools": tool_names}
 
-
 # --------- Send email via MCP tool ---------
 @app.post("/send-email")
 async def send_email(request: EmailRequest):
     print(request.email_id,request.message)
-    async with Client(MCP_SERVER_URL) as client:
-        # Authenticate with Descope access key
-        # await client.call_tool("authenticator", {"access_key": DESCOPE_ACCESS_KEY})
-        
-        # Call the MCP tool to send email
-        result = await client.call_tool(
-            "send_email_to_employees",
-            {"email_id": request.email_id, "message": request.message}
-        )
-        return {"result": result}
+    mail_sender_agent(request.email_id,request.message)
 
 @app.get("/get-email")
 async def get_email():
@@ -94,7 +87,6 @@ async def get_appeal(request: Request):
 async def handle_appeal(
     subject1: str = Form(...),
     content1: str = Form(...),
-   
 ):
     """
     Receive submitted appeal content and close window
@@ -103,6 +95,12 @@ async def handle_appeal(
     print("Appeals received:")
     print(f"1: {subject1} - {content1}")
     # print(f"2: {subject2} - {content2}")
+    prompt="add the entry to the table 'appeal'(id, subject, content, response_id, status) "
+    db_controller_agent(prompt=prompt)
+
+    prompt="appeal recieved and sent and the token created with the token id "
+    mail_sender_agent()
+
 
     # Return JS to close the window
     return HTMLResponse(content="""
@@ -116,32 +114,21 @@ async def handle_appeal(
         </html>
     """)
 
+
 @app.post("/webhook")
 async def webhook(alert: dict):
     """
     Process alert JSON and forward it to /responses/add
     """
-
     #need to write the for look policy
 
     print(alert)
     alert_data = apply_policy(alert)
-
+    
     prompt = f"mail this issue to the {alert.get('user')} with the detailed summary of the following details, parapharase these into a passage such that everyone can understand" + str(alert) +"along with this, warn them the account might be blocked, regards ZeroTrust security monitoring team"
     print(prompt)
-    async with Client(MCP_SERVER_URL) as client:
-        # Authenticate with Descope access key
-        # await client.call_tool("authenticator", {"access_key": DESCOPE_ACCESS_KEY})
-        
-        # Call the MCP tool to send email
-        result = await client.call_tool(
-            "send_email_to_employees",
-            {"email_id": alert.get('user'), "message": prompt}
-        )
-        print(result)
-
-
-
+    mail_sender_agent( user_id=alert.get('user'), message=prompt)
+    
 
     print(f"✅ Alert processed locally: {alert_data.get('alert_name')} for user {alert_data.get('user')}")
     return {"status": "processed", "alert": alert_data}

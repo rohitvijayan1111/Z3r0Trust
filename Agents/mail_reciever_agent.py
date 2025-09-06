@@ -12,9 +12,6 @@ load_dotenv()
 
 async def test_server():
 
-   
-    
-
     async with Client("http://localhost:8080/mcp") as client:
         # ✅ Call authenticator
         # auth_result = await client.call_tool("authenticator", {"token": token})

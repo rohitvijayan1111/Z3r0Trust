@@ -1,34 +1,34 @@
-import asyncio
-from fastmcp import Client
 import os
+from fastmcp import Client
+from phi.model.groq import Groq
 from dotenv import load_dotenv
-import sys
+from mcp.server.fastmcp import FastMCP
+from phi.agent import Agent
+from db_controller_agent import db_controller_agent
+mcp = FastMCP("AlertHandler")
+import asyncio
 
 load_dotenv()
 
-async def test_server(email_id, message):
-    async with Client("http://localhost:8080/mcp") as client:
-        tools = await client.list_tools()
-        for tool in tools:
-            print(f">>> Tool found: {tool.name}")
 
-        # Call authenticator
-        result = await client.call_tool("authenticator", {"access_key": os.getenv("DESCOPE_ACCESS_KEY")})
-        print(result[0])
+async def mail_sender_agent(user_id,message):
+    "This agent decides what action to take"
+    
+    MCP_SERVER_URL = os.getenv("MCP_SERVER_URL")
+    DESCOPE_ACCESS_KEY = os.getenv("DESCOPE_ACCESS_KEY")
 
-        # Send email
+    async with Client(MCP_SERVER_URL) as client:
+
+        # Authenticate with Descope access key
+        # await client.call_tool("authenticator", {"access_key": DESCOPE_ACCESS_KEY})
+        # Call the MCP tool to send email
+
+
         result = await client.call_tool(
-            "send_email_to_employees", 
-            {"email_id": email_id, "message": message}
+            "send_email_to_employees",
+            {"email_id": user_id, "message": message}
         )
-        print(f"<<< Result: {result[0].text}")
 
-if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: python send_email.py <email_id> <message>")
-        sys.exit(1)
+        return {"result": result}
+    return "statues from AlertHandler : Successfully executed"
 
-    email_arg = sys.argv[1]
-    message_arg = sys.argv[2]
-
-    asyncio.run(test_server(email_arg, message_arg))
