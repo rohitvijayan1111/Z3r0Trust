@@ -21,11 +21,16 @@ export function SignupFormDemo1() {
       });
 
       const result = await response.json();
-      console.log("Flask backend response:", result);
+      console.log("Backend response:", result);
 
-      if (result.status === "success") {
-        setMessage("✅ Login successful!");
+      if (result.status === "success" && result.session_jwt) {
+        // ✅ Store session_jwt in localStorage
         localStorage.setItem("session_jwt", result.session_jwt);
+
+        setMessage("✅ Login successful!");
+
+        // 👉 optional: redirect to dashboard page
+        window.location.href = "/dashboard";
       } else {
         setMessage("❌ " + (result.message || "Login failed"));
       }
@@ -34,6 +39,7 @@ export function SignupFormDemo1() {
       setMessage("❌ Backend unavailable.");
     }
   };
+
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black px-4">
