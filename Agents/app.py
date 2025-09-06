@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from datetime import datetime
 from app_helper_functions import apply_policy 
 from pydantic import BaseModel
 from typing import Optional
@@ -16,8 +17,11 @@ descope = DescopeClient(project_id=PROJECT_ID)
 
 from db_controller_agent import db_controller_agent
 from app_helper_functions import apply_policy
+from cache import is_duplicate,cache_cleaner
 from alert_handler_agent import alert_handler_agent
 from mail_sender_agent import mail_sender_agent
+
+from typing import Optional, Union, List
 
 
 load_dotenv()
@@ -116,42 +120,54 @@ async def handle_appeal(
 
 
 @app.post("/webhook")
-async def webhook(alert: dict):
-    """
-    Process alert JSON and forward it to /responses/add
-    """
-    #need to write the for look policy
+async def webhook(alerts: Union[dict, List[dict]]):
+    print(alerts)
+    if isinstance(alerts, dict):
+        alerts = [alerts]
 
-    print(alert)
-    alert_data = apply_policy(alert)
+    import json
+    print(json.dumps(alerts, indent=4))  # pretty print
 
-    prompt = f"mail this issue to the {alert.get('user')} with the detailed summary of the following details, parapharase these into a passage such that everyone can understand" + str(alert) +"along with this, warn them the account might be blocked, regards ZeroTrust security monitoring team"
-    print(prompt)
-    mail_sender_agent( user_id=alert.get('user'), message=prompt)
-    
+    processed, suppressed = [], []
 
-    print(f"✅ Alert processed locally: {alert_data.get('alert_name')} for user {alert_data.get('user')}")
-    return {"status": "processed", "alert": alert_data}
+    for alert in alerts:
+        alert=alert = alert["result"]
+        alert_id = alert.get("alert_id")
+        alert_name = alert.get("alert_name")
+        if not alert_id or not alert_name:
+            continue
+        if is_duplicate(alert_id, alert_name):
+            suppressed.append(alert_id)
+            print("XXXXXXXXXX Duplicate detected")
+            continue
 
+        alert_data = apply_policy(alert)
+        processed.append(alert_data)
 
+        prompt = (
+            f"Dear {alert.get('user')},\n\n"
+            f"Our monitoring detected suspicious activity:\n\n"
+            f"{alert}\n\n"
+            "Your account may be blocked if this continues.\n"
+            "Regards,\nZeroTrust Security Monitoring Team"
+        )
 
+        # async with Client(MCP_SERVER_URL) as client:
+        #     await client.call_tool(
+        #         "send_email_to_employees",
+        #         {"email_id": alert.get("user"), "message": prompt}
+        #     )
 
+        print(f"✅ Processed alert: {alert_name} for {alert.get('user')}")
 
+    return {
+        "status": "done",
+        "processed_count": len(processed),
+        "suppressed_count": len(suppressed),
+        "processed": processed,
+        "suppressed": suppressed,
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@app.on_event("startup")
+async def start_background_tasks():
+    asyncio.create_task(cache_cleaner())

@@ -1,7 +1,7 @@
-def apply_policy(alert):
+def apply_policy(alert: dict) -> dict:
     try:
         score = int(alert.get("confidence_score", 0))
-    except ValueError:
+    except (ValueError, TypeError):
         score = 0
 
     if 0 <= score <= 40:
@@ -13,5 +13,4 @@ def apply_policy(alert):
     else:
         alert["status"] = "unknown"
     return alert
-
 

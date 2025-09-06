@@ -219,7 +219,6 @@ def malware_bot_behaviour():
     except requests.exceptions.RequestException as e:
         print("Error:", str(e))
 
-
 def simulate_impossible_travel():
     base_time = datetime.now(timezone.utc)
     events = []
@@ -279,5 +278,5 @@ def simulate_impossible_travel():
 
 
 if __name__ == "__main__":
-    suspicious_api_usage()
+    password_bruteforce()
 
