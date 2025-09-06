@@ -140,12 +140,10 @@ def retrieve_unread_emails() -> List[str]:
 
 # ✅ Run MCP server
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8080))
-    logger.info(f"🚀 MCP server started on port {port}")
+    # port = int(os.getenv("PORT", 8080))
+    # logger.info(f"🚀 MCP server started on port {port}")
     asyncio.run(
         mcp.run_async(
-            transport="stdio",
-            host="0.0.0.0",
-            port=port,
+            transport="stdio"
         )
     )
