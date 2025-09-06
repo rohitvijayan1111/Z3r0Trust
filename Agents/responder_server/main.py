@@ -105,12 +105,13 @@ def send_to_soc(alert):
 # -------------------------------
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    auth = request.headers.get("Authorization")
+    # auth = request.headers.get("Authorization")
     # Optional HEC token validation
     # if auth != f"Splunk {HEC_TOKEN}":
     #     return jsonify({"error": "Unauthorized"}), 403
 
     alert = request.json or {}
+
     if not alert:
         return jsonify({"status": "error", "error": "No alert data received"}), 400
 
@@ -144,6 +145,7 @@ def webhook():
 # -------------------------------
 # Ping endpoint
 # -------------------------------
+
 @app.route("/ping")
 def ping():
     return "Responder is running (secure + policy playbook)"
