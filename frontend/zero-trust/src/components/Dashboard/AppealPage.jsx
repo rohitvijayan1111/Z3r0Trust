@@ -207,33 +207,47 @@ export function AppealPage() {
                   <strong>Confidence Score:</strong>{" "}
                   {selectedAppeal.response.confidence_score}
                 </p>
-
-                {selectedAppeal.response.alert && (
-                  <>
-                    <hr className="my-4 border-gray-300 dark:border-zinc-700" />
-                    <h3 className="text-lg font-semibold dark:text-white">
-                      Associated Alert
-                    </h3>
-                    <p className="dark:text-white">
-                      <strong>Alert Name:</strong>{" "}
-                      {selectedAppeal.response.alert.alert_name}
-                    </p>
-                    <p className="dark:text-white">
-                      <strong>Confidence Score:</strong>{" "}
-                      {selectedAppeal.response.alert.confidence_score}
-                    </p>
-                  </>
+                <p className="dark:text-white">
+                  <strong>Status:</strong> {selectedAppeal.response.status}
+                </p>
+                {console.log(
+                  "Response status:",
+                  selectedAppeal.response.status
                 )}
 
-                <button
-                  onClick={() => handleBlock(selectedAppeal.response.id)}
-                  className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-                >
-                  Block
-                </button>
+                {/* Block / Unblock Buttons */}
+                {selectedAppeal.response.status === "suspended" ? (
+                  <button
+                    onClick={async () => {
+                      try {
+                        await axios.put(
+                          `${API_BASE}/responses/${selectedAppeal.response.id}/undo`
+                        );
+                        alert(
+                          "Response & associated alert unblocked successfully!"
+                        );
+                        fetchAppeals();
+                        fetchAlerts();
+                        setSelectedAppeal(null);
+                      } catch (err) {
+                        console.error("Error unblocking response:", err);
+                        alert("Failed to unblock response.");
+                      }
+                    }}
+                    className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  >
+                    Unblock
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleBlock(selectedAppeal.response.id)}
+                    className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                  >
+                    Block
+                  </button>
+                )}
               </>
             )}
-
             <button
               onClick={() => setSelectedAppeal(null)}
               className="mt-6 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"

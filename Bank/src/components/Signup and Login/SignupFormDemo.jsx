@@ -38,10 +38,7 @@ export function SignupFormDemo1() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black px-4">
       {/* Lock Icon */}
-      <div className="absolute top-6 left-6 z-50">
-        <img src="lock.png" alt="lock" className="w-8 h-8" />
-      </div>
-
+        
       {/* Card Container */}
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-lg dark:bg-zinc-950 sm:p-10 overflow-hidden">
         <motion.div
@@ -54,7 +51,7 @@ export function SignupFormDemo1() {
             Welcome back
           </h2>
           <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 sm:text-base">
-            Log in to continue with ZeroTrust.
+            Log in to continue with Bank Management App.
           </p>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

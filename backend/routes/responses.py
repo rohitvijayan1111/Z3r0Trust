@@ -30,32 +30,26 @@ def undo_response(response_id):
     try:
         cursor = conn.cursor()
 
-        # 1️⃣ Update response status to 'active'
-        cursor.execute(
-            "UPDATE responses SET status='active' WHERE id=%s", (response_id,)
-        )
-
+        # Reactivate response
+        cursor.execute("UPDATE responses SET status='active' WHERE id=%s", (response_id,))
         if cursor.rowcount == 0:
             return jsonify({"error": "Response not found"}), 404
 
-        # 2️⃣ Get associated alert_id
+        # Get associated alert
         cursor.execute("SELECT alert_id FROM responses WHERE id=%s", (response_id,))
         result = cursor.fetchone()
         if result and result[0]:
             alert_id = result[0]
-            # 3️⃣ Update alert: unblock IP & User, set status active
             cursor.execute(
                 "UPDATE alerts SET blockedIP=0, blockedUser=0, status='active' WHERE id=%s",
                 (alert_id,),
             )
 
         conn.commit()
-        return jsonify({"message": "Response and associated alert undone successfully"}), 200
-
+        return jsonify({"message": "Response and associated alert unblocked successfully"}), 200
     except Exception as e:
         print("Error undoing response:", e)
         return jsonify({"error": str(e)}), 500
-
     finally:
         cursor.close()
         conn.close()

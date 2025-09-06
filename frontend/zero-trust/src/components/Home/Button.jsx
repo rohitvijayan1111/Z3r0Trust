@@ -15,30 +15,32 @@ export function HoverBorderGradientDemo() {
   };
 
   return (
-    <div className="flex justify-center text-center relative">
-      <HoverBorderGradient
-        containerClassName="rounded-full"
-        as="button"
-        className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
-        onClick={handleClick}
-      >
-        <AceternityLogo />
-        <span>Get Started</span>
-      </HoverBorderGradient>
+    <>
+      <div className="flex justify-center text-center relative">
+        <HoverBorderGradient
+          containerClassName="rounded-full"
+          as="button"
+          className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
+          onClick={handleClick}
+        >
+          <AceternityLogo />
+          <span>Get Started</span>
+        </HoverBorderGradient>
 
-      {/* Exit animation overlay */}
-      <AnimatePresence>
-        {isExiting && (
-          <motion.div
-            className="fixed inset-0 z-[9999] bg-black"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-          />
-        )}
-      </AnimatePresence>
-    </div>
+        {/* Exit animation overlay */}
+        <AnimatePresence>
+          {isExiting && (
+            <motion.div
+              className="fixed inset-0 z-[9999] bg-black"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
 
