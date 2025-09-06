@@ -14,6 +14,8 @@ from app_helper_functions import apply_policy
 from cache import  cache_cleaner
 from alert_handler_agent import alert_handler_agent
 from mail_sender_agent import mail_sender_agent
+from server import send_email,authenticator,retrieve_unread_emails,tools_list
+
 
 
 nest_asyncio.apply()
@@ -46,21 +48,22 @@ def hi():
 # --------- List available tools ---------
 @app.route("/tools", methods=["GET"])
 def list_tools():
-    async def run():
-        try:
-            async with stdio_client(server_params) as (read_stream, write_stream):
-                async with ClientSession(read_stream, write_stream) as session:
-                    await session.initialize()
-                    tools_result = await session.list_tools()
-                    print("Available tools:")
-                    for tool in tools_result.tools:
-                        print(f"  - {tool.name}: {tool.description}")
-                    return {"tools": [t.dict() for t in tools_result.tools]}
-        except Exception as e:
-            print(f"❌ Connection error: {e}")
-            return {"tools": "connection error"}
+    # async def run():
+    #     try:
+    #         async with stdio_client(server_params) as (read_stream, write_stream):
+    #             async with ClientSession(read_stream, write_stream) as session:
+    #                 await session.initialize()
+    #                 tools_result = await session.list_tools()
+    #                 print("Available tools:")
+    #                 for tool in tools_result.tools:
+    #                     print(f"  - {tool.name}: {tool.description}")
+    #                 return {"tools": [t.dict() for t in tools_result.tools]}
+    #     except Exception as e:
+    #         print(f"❌ Connection error: {e}")
+    #         return {"tools": "connection error"}
 
-    return asyncio.run(run())
+    # return asyncio.run(run())
+    return {"tools":tools_list()}
 
 
 # --------- Send email via MCP tool ---------
@@ -77,10 +80,11 @@ def send_email():
 @app.route("/get-email", methods=["GET"])
 def get_email():
     async def run():
-        async with Client(MCP_SERVER_URL) as client:
-            result = await client.call_tool("retrieve_unread_emails")
-            print(result)
-            return {"result": result}
+        # async with Client(MCP_SERVER_URL) as client:
+        #     result = await client.call_tool("retrieve_unread_emails")
+        #     print(result)
+        #     return {"result": result}
+        result=retrieve_unread_emails()
     return asyncio.run(run())
 
 
@@ -142,3 +146,4 @@ def webhook():
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=True)
+
