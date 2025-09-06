@@ -6,13 +6,13 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-import asyncio
 from app_helper_functions import apply_policy 
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-import httpx
-import requests
 from typing import Optional
+from descope import DescopeClient
+
+PROJECT_ID = "P32GTfUg5UE6jTwQNzhPJzQXDhf2"
+descope = DescopeClient(project_id=PROJECT_ID)
 
 from db_controller_agent import db_controller_agent
 from app_helper_functions import apply_policy
@@ -124,7 +124,7 @@ async def webhook(alert: dict):
 
     print(alert)
     alert_data = apply_policy(alert)
-    
+
     prompt = f"mail this issue to the {alert.get('user')} with the detailed summary of the following details, parapharase these into a passage such that everyone can understand" + str(alert) +"along with this, warn them the account might be blocked, regards ZeroTrust security monitoring team"
     print(prompt)
     mail_sender_agent( user_id=alert.get('user'), message=prompt)
@@ -132,6 +132,25 @@ async def webhook(alert: dict):
 
     print(f"✅ Alert processed locally: {alert_data.get('alert_name')} for user {alert_data.get('user')}")
     return {"status": "processed", "alert": alert_data}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
