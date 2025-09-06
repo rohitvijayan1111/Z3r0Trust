@@ -8,10 +8,13 @@ from phi.model.groq import Groq
 from dotenv import load_dotenv
 from descope import DescopeClient
 from fastapi import HTTPException
+import imaplib
+import email
+from email.header import decode_header
+from typing import List
 
 model_id="llama-3.3-70b-versatile"
 load_dotenv()
-# jwt_response = descope_client.validate_session(session_token=session_token)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format="[%(levelname)s]: %(message)s", level=logging.INFO)
@@ -48,23 +51,13 @@ def authenticator(access_key: str) -> bool:
     """
     return validate_token(access_key=access_key)
 
-# ✅ Add tool
-@mcp.tool()
-def add(a: int, b: int) -> int:
-    
-    logger.info(f">>> Tool: 'add' called with {a} + {b}")
-    return a + b
-
-# ✅ Subtract tool
-@mcp.tool()
-def subtract(a: int, b: int) -> int:
-    
-    logger.info(f">>> Tool: 'subtract' called with {a} - {b}")
-    return a - b
 
 
 @mcp.tool()
-def send_email_to_employees(email_id:str, message:str) -> str:  
+def send_email_to_employees(email_id:str, message:str) -> str: 
+    """
+    The function send mail to the given email_id and with the given message 
+    """ 
     model_id="llama-3.3-70b-versatile"
     load_dotenv()
     groq_api_key = os.getenv("GROQ_API_KEY")
@@ -89,6 +82,65 @@ def send_email_to_employees(email_id:str, message:str) -> str:
     )
     agent.print_response(f"{message} send mail only once")
     return "mail sent successfully"
+
+
+@mcp.tool()
+def retrieve_unread_emails() -> List[str]:
+    """
+    Retrieve last 5 unread emails from the sender Gmail inbox.
+
+    Returns:
+        List of last 5 unread email subjects and snippets
+    """
+    sender_email = "kavirajmetech@gmail.com"
+    sender_passkey = os.getenv("GMAIL_PASSKEY")
+
+    # Connect to Gmail IMAP
+    imap = imaplib.IMAP4_SSL("imap.gmail.com")
+    try:
+        imap.login(sender_email, sender_passkey)
+    except imaplib.IMAP4.error as e:
+        return [f"Failed to login: {e}"]
+
+    # Select INBOX
+    imap.select("INBOX")
+
+    # Search for unread emails
+    status, messages = imap.search(None, "UNSEEN")
+    if status != "OK" or not messages[0]:
+        imap.logout()
+        return ["No unread emails found."]
+
+    mail_ids = messages[0].split()
+    last_ids = mail_ids[-5:]  # Last 5 unread emails
+
+    result_emails = []
+    for mail_id in reversed(last_ids):
+        status, msg_data = imap.fetch(mail_id, "(RFC822)")
+        if status != "OK":
+            continue
+        for response_part in msg_data:
+            if isinstance(response_part, tuple):
+                msg = email.message_from_bytes(response_part[1])
+                # Decode subject
+                subject, encoding = decode_header(msg["Subject"])[0]
+                if isinstance(subject, bytes):
+                    subject = subject.decode(encoding or "utf-8", errors="ignore")
+                # Get body snippet
+                body = ""
+                if msg.is_multipart():
+                    for part in msg.walk():
+                        if part.get_content_type() == "text/plain":
+                            body = part.get_payload(decode=True).decode(errors="ignore")
+                            break
+                else:
+                    body = msg.get_payload(decode=True).decode(errors="ignore")
+                snippet = body[:100]  # first 100 chars
+                result_emails.append(f"Subject: {subject} | Snippet: {snippet}")
+
+    imap.logout()
+    return result_emails
+
 
 # ✅ Run MCP server
 if __name__ == "__main__":

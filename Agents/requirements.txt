@@ -10,3 +10,5 @@ openai
 mcp
 mysql-connector-python 
 google-generativeai
+pymysql
+sqlalchemy
