@@ -7,15 +7,20 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
-import asyncio
 from app_helper_functions import apply_policy 
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
+from descope import DescopeClient
+
+PROJECT_ID = "P32GTfUg5UE6jTwQNzhPJzQXDhf2"
+descope = DescopeClient(project_id=PROJECT_ID)
+
+from db_controller_agent import db_controller_agent
 from app_helper_functions import apply_policy
 from cache import is_duplicate,cache_cleaner
-import httpx
-import requests
+from alert_handler_agent import alert_handler_agent
+from mail_sender_agent import mail_sender_agent
+
 from typing import Optional, Union, List
 
 
@@ -44,12 +49,10 @@ class EmailRequest(BaseModel):
     email_id: str
     message: str
 
-
 # --------- Health check ---------
 @app.get("/")
 def hello():
     return {"message": "Hello MCP!"}
-
 
 # --------- List available tools ---------
 @app.get("/tools")
@@ -59,21 +62,11 @@ async def list_tools():
         tool_names = [tool.name for tool in tools]
         return {"tools": tool_names}
 
-
 # --------- Send email via MCP tool ---------
 @app.post("/send-email")
 async def send_email(request: EmailRequest):
     print(request.email_id,request.message)
-    async with Client(MCP_SERVER_URL) as client:
-        # Authenticate with Descope access key
-        # await client.call_tool("authenticator", {"access_key": DESCOPE_ACCESS_KEY})
-        
-        # Call the MCP tool to send email
-        result = await client.call_tool(
-            "send_email_to_employees",
-            {"email_id": request.email_id, "message": request.message}
-        )
-        return {"result": result}
+    mail_sender_agent(request.email_id,request.message)
 
 @app.get("/get-email")
 async def get_email():
@@ -98,7 +91,6 @@ async def get_appeal(request: Request):
 async def handle_appeal(
     subject1: str = Form(...),
     content1: str = Form(...),
-   
 ):
     """
     Receive submitted appeal content and close window
@@ -107,6 +99,12 @@ async def handle_appeal(
     print("Appeals received:")
     print(f"1: {subject1} - {content1}")
     # print(f"2: {subject2} - {content2}")
+    prompt="add the entry to the table 'appeal'(id, subject, content, response_id, status) "
+    db_controller_agent(prompt=prompt)
+
+    prompt="appeal recieved and sent and the token created with the token id "
+    mail_sender_agent()
+
 
     # Return JS to close the window
     return HTMLResponse(content="""
@@ -119,6 +117,7 @@ async def handle_appeal(
             </body>
         </html>
     """)
+
 
 @app.post("/webhook")
 async def webhook(alerts: Union[dict, List[dict]]):
