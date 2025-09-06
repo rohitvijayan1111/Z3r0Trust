@@ -22,8 +22,8 @@ PROJECT_ID = "P32GTfUg5UE6jTwQNzhPJzQXDhf2"
 descope = DescopeClient(project_id=PROJECT_ID)
 
 server_params = StdioServerParameters(
-    command="python",  # The command to run your server
-    args=["server.py"],  # Arguments to the command
+    command="python",  
+    args=["server.py"],  
 )
 
 load_dotenv()
@@ -42,7 +42,6 @@ def hello():
 @app.route("/hi", methods=["GET"])
 def hi():
     return jsonify({"message": " hi Hello MCP!"})
-
 
 # --------- List available tools ---------
 @app.route("/tools", methods=["GET"])

@@ -18,7 +18,7 @@
 #     }
 # )
 # print(resp.json())
-import requests
+# import requests
 
 # resp = requests.post(
 #     "http://127.0.0.1:8000/send-email",
@@ -49,6 +49,17 @@ import requests
 
 
 
-resp=requests.get("http://127.0.0.1:8000/")
-print(resp.status_code)
-print(resp.text)  # First check raw response
+# resp=requests.get("http://127.0.0.1:8000/")
+# print(resp.status_code)
+# print(resp.text)  # First check raw response
+
+import requests
+
+url = "http://34.44.88.193:8000/send-email"
+data = {
+    "email_id": "test@example.com",
+    "message": "Hello from Flask!"
+}
+
+response = requests.post(url, json=data)
+print(response.json())
