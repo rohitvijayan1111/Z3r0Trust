@@ -171,7 +171,7 @@ def log_the_alert_no_block(employee_id: str, session_token: str) -> str:
 
 # ========== Alert Handler Agent ==========
 
-def alert_handler(alert: dict):
+def alert_handler_agent(alert: dict):
     """This agent decides what action to take"""
     model_id = "llama-3.3-70b-versatile"
     load_dotenv()

@@ -4,6 +4,7 @@ yfinance
 packaging
 duckduckgo-search
 fastapi
+fastmcp
 uvicorn
 groq 
 openai
@@ -12,3 +13,5 @@ mysql-connector-python
 google-generativeai
 pymysql
 sqlalchemy
+descope
+Jinja2
