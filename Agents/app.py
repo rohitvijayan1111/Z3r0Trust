@@ -163,22 +163,25 @@ def webhook():
                 continue
 
             # alert_data = apply_policy(alert)
-            # processed.append(alert_data)
+            processed.append(alert_data)
 
             print("reached storage post")
             url = "http://34.93.9.19/api/alerts/fetch"
 
             response = requests.post(url, alert)
-
+            return {
+                "res":response
+            }
             print(response)
-            prompt = (
-                f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alert} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
-            )
 
-            mail_sender_agent(alert.get("user"),prompt)
-            print(f"✅ Processed alert: {alert_name} for {alert.get('user')}")
-            print("\nreached alert agent\n")
-            alert_handler_agent(alert=alert)
+            # prompt = (
+            #     f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alert} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
+            # )
+
+            # mail_sender_agent(alert.get("user"),prompt)
+            # print(f"✅ Processed alert: {alert_name} for {alert.get('user')}")
+            # print("\nreached alert agent\n")
+            # alert_handler_agent(alert=alert)
 
         return {
             "status": "done",
@@ -186,7 +189,7 @@ def webhook():
             "suppressed_count": len(suppressed),
             "processed": processed,
             "suppressed": suppressed,
-        }
+          }
     except Exception as e:
         print("exception recieved")
         print(e)
