@@ -25,7 +25,7 @@ class Alert:
                 alert_data.get("locations"),
                 str(alert_data.get("devices")),
                 alert_data.get("actions"),
-                0 if alert_data.get("statuses")=='failed' else 1,
+                'suspended' if alert_data.get("statuses")=='failed' else 'active',
                 int(alert_data.get("failed_count", '0')),
                 alert_data.get("blockedIP", 0),
                 alert_data.get("blockedUser", 0)
