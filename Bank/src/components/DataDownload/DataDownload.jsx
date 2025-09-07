@@ -4,31 +4,39 @@ import { motion } from "framer-motion";
 export function DataDownload() {
   const [downloading, setDownloading] = useState(false);
 
-  // Mock transactions
-  const mockTransactions = [
-    { date: "2025-09-01", description: "Salary Credit", amount: 50000 },
-    { date: "2025-09-02", description: "ATM Withdrawal", amount: -2000 },
-    { date: "2025-09-04", description: "UPI Payment", amount: -350 },
-    { date: "2025-09-05", description: "Interest Credit", amount: 120 },
-  ];
+  // --- Generate ~100k rows for ~5MB data ---
+  const generateBigTransactions = () => {
+    const transactions = [];
+    for (let i = 1; i <= 100000; i++) {
+      transactions.push({
+        date: `2025-09-${String((i % 30) + 1).padStart(2, "0")}`,
+        description: `Transaction #${i}`,
+        amount: (Math.random() * 2000 - 1000).toFixed(2), // credit or debit
+      });
+    }
+    return transactions;
+  };
 
-  // Helper: Convert to CSV string
+  // Static dataset (generated once)
+  const bigTransactions = generateBigTransactions();
+
+  // --- Helper: Convert to CSV string ---
   const toCSV = (data) => {
     const headers = Object.keys(data[0]).join(",");
     const rows = data.map((row) => Object.values(row).join(","));
     return [headers, ...rows].join("\n");
   };
 
-  // Handle download
+  // --- Handle download ---
   const handleDownload = (format) => {
     setDownloading(true);
     setTimeout(() => {
       let blob;
       if (format === "csv") {
-        const csv = toCSV(mockTransactions);
+        const csv = toCSV(bigTransactions);
         blob = new Blob([csv], { type: "text/csv" });
       } else {
-        const json = JSON.stringify(mockTransactions, null, 2);
+        const json = JSON.stringify(bigTransactions, null, 2);
         blob = new Blob([json], { type: "application/json" });
       }
 
@@ -36,8 +44,9 @@ export function DataDownload() {
       link.href = URL.createObjectURL(blob);
       link.download = `transactions.${format}`;
       link.click();
+
       setDownloading(false);
-    }, 1000); // Simulate backend delay
+    }, 1000); // Simulated delay
   };
 
   return (
@@ -52,8 +61,7 @@ export function DataDownload() {
           Download Transaction History
         </h2>
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
-          Export all your transactions for backup or analysis. Choose your
-          preferred format below.
+          Export a large dataset of transactions for testing big data downloads.
         </p>
 
         <div className="flex gap-4">

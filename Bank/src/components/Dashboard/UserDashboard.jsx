@@ -34,7 +34,7 @@ export function UserDashboard() {
     const fetchData = async () => {
       try {
         const balanceRes = await fetch(
-          `http://localhost:5000/api/balance?user_id=${user_id}`
+          `http://localhost:8000/api/balance?user_id=${user_id}`
         );
         if (!balanceRes.ok) throw new Error("Failed to fetch balance");
         const balanceData = await balanceRes.json();
@@ -42,7 +42,7 @@ export function UserDashboard() {
         setBalance(balanceData.balance);
 
         const txRes = await fetch(
-          `http://localhost:5000/api/transactions?user_id=${user_id}`
+          `http://localhost:8000/api/transactions?user_id=${user_id}`
         );
         if (!txRes.ok) throw new Error("Failed to fetch transactions");
         const txData = await txRes.json();
