@@ -11,7 +11,7 @@ def db_controller_agent(prompt):
     load_dotenv()
     groq_api_key = os.getenv("GROQ_API_KEY")
 
-    db_url = "mysql+pymysql://root:ZeroTrust%40123@34.93.101.129:3306/sample"
+    db_url = "mysql+pymysql://root:ZeroTrust%40123@34.93.101.129:3306/zerotrust"
 
     agent = Agent(
         name="DB agent",
