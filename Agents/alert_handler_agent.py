@@ -84,7 +84,7 @@ from descope import DescopeClient
 import os
 import time
 
-from Agents.mail_sender_agent import mail_sender_agent
+from mail_sender_agent import mail_sender_agent
 
 # ========== MCP Server ==========
 mcp = FastMCP("AlertHandler")
