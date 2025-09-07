@@ -200,36 +200,38 @@ def authenticator(access_key: str) -> bool:
     """
     return validate_token(access_key=access_key)
 
-def send_email(email_id:str, message:str) -> str: 
+def send_email(email_id: str, message: str) -> bool: 
     """
-    The function send mail to the given email_id and with the given message 
+    Send mail to the given email_id with the given message 
     """ 
-    model_id="llama-3.3-70b-versatile"
-    load_dotenv()
-    groq_api_key = os.getenv("GROQ_API_KEY")
+    try:
+        model_id = "llama-3.3-70b-versatile"
+        load_dotenv()
+        groq_api_key = os.getenv("GROQ_API_KEY")
 
-    sender_email = "kavirajmetech@gmail.com"
-    sender_name = "kaviyarasu"
-    sender_passkey = os.getenv("GMAIL_PASSKEY")
+        sender_email = "kavirajmetech@gmail.com"
+        sender_name = "kaviyarasu"
+        sender_passkey = os.getenv("GMAIL_PASSKEY")
 
-    agent = Agent(
-        name="Web Search Agent",
-        role="Send email",
-        model=Groq(id=model_id, api_key=groq_api_key),
-        tools=[
-            EmailTools(
-                receiver_email=email_id,
-                sender_email=sender_email,
-                sender_name=sender_name,
-                sender_passkey=sender_passkey,
-            )
-        ],
-        markdown=True
-    )
-    agent.print_response(f"{message} send mail only once")
-    return "mail sent successfully"
-
-
+        agent = Agent(
+            name="Email Agent",
+            role="Send email",
+            model=Groq(id=model_id, api_key=groq_api_key),
+            tools=[
+                EmailTools(
+                    receiver_email=email_id,
+                    sender_email=sender_email,
+                    sender_name=sender_name,
+                    sender_passkey=sender_passkey,
+                )
+            ],
+            markdown=True
+        )
+        agent.print_response(f"{message} send mail only once")
+        return True
+    except Exception as e:
+        return False
+    
 def retrieve_unread_emails() -> List[str]:
     """
     Retrieve last 5 unread emails from the sender Gmail inbox.

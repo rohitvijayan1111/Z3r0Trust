@@ -67,14 +67,17 @@ def list_tools():
 
 
 # --------- Send email via MCP tool ---------
+
 @app.route("/send-email", methods=["POST"])
-def send_email():
+def send_email_route():
     data = request.get_json()
     email_id = data.get("email_id")
     message = data.get("message")
     print(email_id, message)
-    mail_sender_agent(email_id, message)
-    return jsonify({"status": "sent"})
+
+    success = mail_sender_agent(email_id, message)
+
+    return jsonify({"status": "sent" if success else "failed"})
 
 
 @app.route("/get-email", methods=["GET"])

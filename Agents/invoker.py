@@ -55,10 +55,10 @@
 
 import requests
 
-url = "http://34.44.88.193:8000/send-email"
+url = "http://34.44.88.193/send-email"
 data = {
-    "email_id": "test@example.com",
-    "message": "Hello from Flask!"
+    "email_id": "kavi22022.ad@rmkec.ac.in",
+    "message": "Mail kavi22022.ad@rmkec.ac.in as tomorrow is declared as holiday due to rainfall"
 }
 
 response = requests.post(url, json=data)

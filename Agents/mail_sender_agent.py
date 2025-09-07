@@ -12,24 +12,17 @@ from server import send_email
 load_dotenv()
 
 
-async def mail_sender_agent(user_id,message):
-    "This agent decides what action to take"
-    
-    DESCOPE_ACCESS_KEY = os.getenv("DESCOPE_ACCESS_KEY")
-
-    # async with Client(MCP_SERVER_URL) as client:
-
-    #     # Authenticate with Descope access key
-    #     # await client.call_tool("authenticator", {"access_key": DESCOPE_ACCESS_KEY})
-    #     # Call the MCP tool to send email
-
-
-    #     result = await client.call_tool(
-    #         "send_email_to_employees",
-    #         {"email_id": user_id, "message": message}
-    #     )
-    result=send_email(user_id,message=message)
-
-    return {"result": result}
-    return "statues from AlertHandler : Successfully executed"
+def mail_sender_agent(user_id: str, message: str) -> bool:
+    """
+    This agent decides what action to take
+    """
+    try:
+        descope_access_key = os.getenv("DESCOPE_ACCESS_KEY")
+        # For now, just send email directly (no async, no MCP)
+        result = send_email(user_id, message=message)
+        return bool(result)
+    except Exception as e:
+        
+        print(f"Error in mail_sender_agent: {e}")
+        return False
 
