@@ -14,7 +14,7 @@ export function SignupFormDemo1() {
     console.log("Login submitted");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("http://localhost:8000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, request_type: "web" }),
@@ -23,13 +23,16 @@ export function SignupFormDemo1() {
       const result = await response.json();
       console.log("Backend response:", result);
 
+      // ✅ Store the full response in localStorage
+      localStorage.setItem("auth_response", JSON.stringify(result));
+
       if (result.status === "success" && result.session_jwt) {
-        // ✅ Store session_jwt in localStorage
+        // ✅ Store important fields separately
         localStorage.setItem("session_jwt", result.session_jwt);
+        localStorage.setItem("user_id", result.attributes.user_id);
 
         setMessage("✅ Login successful!");
-
-        // 👉 optional: redirect to dashboard page
+        alert("✅ Login successful!"); // 🔔 Show alert
         window.location.href = "/dashboard";
       } else {
         setMessage("❌ " + (result.message || "Login failed"));
@@ -40,12 +43,8 @@ export function SignupFormDemo1() {
     }
   };
 
-
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black px-4">
-      {/* Lock Icon */}
-        
-      {/* Card Container */}
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-lg dark:bg-zinc-950 sm:p-10 overflow-hidden">
         <motion.div
           key="login"

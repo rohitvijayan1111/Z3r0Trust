@@ -9,28 +9,57 @@ export function UserDashboard() {
   const session_jwt = localStorage.getItem("session_jwt");
 
   useEffect(() => {
-    // 🟢 Simulate fetching from backend
-    setTimeout(() => {
-      if (!session_jwt) {
-        setError("No session found. Please log in.");
-        setLoading(false);
-        return;
-      }
-
-      // Mock data
-      setBalance(152430.75);
-      setTransactions([
-        { description: "Salary Credit", amount: 50000, date: "2025-09-01" },
-        { description: "Electricity Bill", amount: -3200, date: "2025-08-28" },
-        { description: "UPI Payment", amount: -1500, date: "2025-08-25" },
-        { description: "Stock Dividend", amount: 2500, date: "2025-08-20" },
-      ]);
+    if (!session_jwt) {
+      setError("No session found. Please log in.");
       setLoading(false);
-    }, 1000); // fake API delay
+      return;
+    }
+
+    let user_id = null;
+    try {
+      const authData = JSON.parse(
+        localStorage.getItem("auth_response") || "{}"
+      );
+      user_id = authData.user_id;
+      console.log("User ID:", user_id);
+      if (!user_id) throw new Error("Invalid auth data");
+    } catch (e) {
+      setError("Invalid session. Please log in again.");
+      setLoading(false);
+      return;
+    }
+    console.log("Calling balance API for user:", user_id);
+
+
+    const fetchData = async () => {
+      try {
+        const balanceRes = await fetch(
+          `http://localhost:5000/api/balance?user_id=${user_id}`
+        );
+        if (!balanceRes.ok) throw new Error("Failed to fetch balance");
+        const balanceData = await balanceRes.json();
+        console.log("Balance data:", balanceData);
+        setBalance(balanceData.balance);
+
+        const txRes = await fetch(
+          `http://localhost:5000/api/transactions?user_id=${user_id}`
+        );
+        if (!txRes.ok) throw new Error("Failed to fetch transactions");
+        const txData = await txRes.json();
+        setTransactions(txData);
+      } catch (err) {
+        setError("Error fetching data from server.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [session_jwt]);
 
   const handleLogout = () => {
     localStorage.removeItem("session_jwt");
+    localStorage.removeItem("auth_response");
     window.location.reload(); // Reload app → goes back to login
   };
 

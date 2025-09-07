@@ -6,7 +6,7 @@ export function FundTransfer() {
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!toAccount || !amount || isNaN(amount) || amount <= 0) {
@@ -14,15 +14,28 @@ export function FundTransfer() {
       return;
     }
 
-    // Simulate API call
-    setTimeout(() => {
-      setMessage(
-        `✅ Successfully transferred ₹${amount} to account ${toAccount}.`
-      );
-      setToAccount("");
-      setAmount("");
-    }, 1000);
+    try {
+      const response = await fetch("http://localhost:5000/api/transfer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from_account_number: "111722293", // 👈 get logged-in user's account number
+          to_account_number: toAccount,
+          amount: parseFloat(amount),
+        }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setMessage("✅ " + result.message);
+      } else {
+        setMessage("❌ " + result.detail);
+      }
+    } catch (err) {
+      setMessage("❌ Backend unavailable.");
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black flex items-center justify-center p-6">

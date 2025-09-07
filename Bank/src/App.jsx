@@ -28,8 +28,6 @@ function App() {
         <Route path="/mfa" element={<MFAEnforcement/>} />
         <Route path="/network" element={<NetworkAnomalySimulation/>} />
         <Route path="/suspicious" element={<SuspiciousApiPlayground/>} />
-       
-
       </Routes>
     </>
 
