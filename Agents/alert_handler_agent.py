@@ -75,150 +75,434 @@
 # print(alert_handler({"id":1,"name":"phissing alert"}))
 
 
-from phi.agent import Agent
-from phi.tools.sql import SQLTools
-from phi.model.groq import Groq
+# from phi.agent import Agent
+# from phi.tools.sql import SQLTools
+# from phi.model.groq import Groq
+# from dotenv import load_dotenv
+# from mcp.server.fastmcp import FastMCP
+# from descope import DescopeClient
+# import os
+# import time
+# from mail_sender_agent import mail_sender_agent
+
+# # ========== MCP Server ==========
+# mcp = FastMCP("AlertHandler")
+# alert={}
+
+# # ========== Descope Setup ==========
+# PROJECT_ID = "P32Dj1SFaOxhwz4v0i9D6jseEJny"
+# MANAGEMENT_KEY = os.getenv("DESCOPE_MANAGEMENT_KEY")  # required for user blocking/unblocking
+# descope = DescopeClient(project_id=PROJECT_ID, management_key=MANAGEMENT_KEY)
+
+# # ========== Tools ==========
+
+# @mcp.tool()
+# def logoutaccount(session_token: str,userid: str,alert: dict) -> str:
+#     """Logout a user by invalidating their session token"""
+#     try:
+#         descope.logout(session_token)
+#         prompt = (
+#                 f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity and notified already : {alert} Your account is being logged out and enable multi factor autheentication for security reason. Regards, ZeroTrust Security Monitoring Team, here add the button appeal and on cick the button should redirect to http://34.44.88.193/appeal"
+#             )
+#         mail_sender_agent(user_id=userid,message=prompt)
+#         return "✅ User logged out successfully"
+#     except Exception as e:
+#         return f"❌ Logout failed: {str(e)}"
+
+
+# @mcp.tool()
+# def forward_to_soc() -> str:
+#     """Forward alert to SOC team"""
+#     # (Here you could push alert into SOC queue or DB)
+#     return "📨 Alert forwarded to SOC successfully"
+
+
+# @mcp.tool()
+# def remove_block(userid: str) -> str:
+#     """Remove block from a user account"""
+#     try:
+#         descope.management.user.update_status(userid, "enabled")
+#         return f"✅ Block removed for user {userid}"
+#     except Exception as e:
+#         return f"❌ Failed to remove block: {str(e)}"
+
+
+# @mcp.tool()
+# def permanently_block_the_user(userid: str) -> str:
+#     """Block the user account permanently"""
+#     try:
+#         descope.management.user.update_status(userid, "disabled")
+
+#         prompt = (
+#                 f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity and notified already : {alert} Your account blocked permanently because of this. Regards, ZeroTrust Security Monitoring Team, here add the button appeal and on cick the button should redirect to http://34.44.88.193/appeal"
+#             )
+        
+#         mail_sender_agent(user_id=userid,message=prompt)
+#         return f"🚫 Permanently blocked user {userid}"
+#     except Exception as e:
+#         return f"❌ Failed to block user: {str(e)}"
+
+# import threading, time
+
+# @mcp.tool()
+# def temporarily_block_the_user(userid: str, duration: int = 600) -> str:
+#     """Block the user account temporarily for a given duration (seconds)"""
+#     try:
+#         descope.management.user.update_status(userid, "disabled")
+
+#         # Background task to re-enable after duration
+#         def unblock_later():
+#             time.sleep(duration)
+#             descope.management.user.update_status(userid, "enabled")
+
+#         threading.Thread(target=unblock_later, daemon=True).start()
+
+#         prompt = (
+#             f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity: {alert}. Your account was blocked temporarily. Regards, ZeroTrust Security Monitoring Team. Click here to appeal: http://34.44.88.193/appeal"
+#         )
+#         mail_sender_agent(user_id=userid, message=prompt)
+
+#         return f"⏳ Temporarily blocked {userid} for {duration} seconds"
+#     except Exception as e:
+#         return f"❌ Temporary block failed: {str(e)}"
+
+# @mcp.tool()
+# def log_the_alert_no_block(employee_id: str) -> str:
+#     """
+#     Log the alert, log the user out, and enforce MFA on next login.
+#     """
+#     try:
+#         # 1. Log the alert
+#         log_msg = f"📝 Logged alert for user{employee_id}, no block applied"
+
+#         # 2. Logout (invalidate session token)
+#         # descope.logout(session_token)
+
+#         # # 3. Enforce MFA for the user on next login
+#         # descope.management.user.update_mfa(
+#         #     identifier=employee_id,
+#         #     totp=True,   # force TOTP MFA (Google Authenticator, etc.)
+#         #     phone=True   # force phone MFA if needed
+#         # )
+
+#         return f"{log_msg}. ✅ User {employee_id} logged out and MFA enforced."
+#     except Exception as e:
+#         return f"❌ Failed to log alert and enforce MFA: {str(e)}"
+
+
+# # ========== Alert Handler Agent ==========
+
+# def alert_handler_agent(alert1: dict):
+#     global alert
+#     alert=alert1
+#     """This agent decides what action to take"""
+#     model_id = "llama-3.3-70b-versatile"
+#     load_dotenv()
+#     groq_api_key = os.getenv("GROQ_API_KEY")
+
+#     agent = Agent(
+#         name="Block handler",
+#         role="Analyse the given alert data and decide what action to take using available tools",
+#         model=Groq(id=model_id, api_key=groq_api_key),
+#         tools=[permanently_block_the_user, temporarily_block_the_user, log_the_alert_no_block,remove_block,forward_to_soc,remove_block],
+#         markdown=True,
+#     )
+
+#     # Debug: ask it what tools it has
+#     # agent.print_response("List the available tools")
+
+#     # Pass the alert to the agent for decision
+#     agent.print_response(f"Handle this alert: {alert1} proprly, and do the action promptly")
+
+#     return "✅ Status from AlertHandler: Successfully executed"
+
+# alert_handler_agent.py
+import os
+import logging
+import threading
+from typing import Any, Dict, Optional
+
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
-from descope import DescopeClient
-import os
-import time
-from mail_sender_agent import mail_sender_agent
 
-# ========== MCP Server ==========
+# Optional imports from your project (safe guarded)
+try:
+    from mail_sender_agent import mail_sender_agent
+except Exception:
+    mail_sender_agent = None
+
+try:
+    from db_controller_agent import db_controller_agent
+except Exception:
+    db_controller_agent = None
+
+# Descope client
+try:
+    from descope import DescopeClient
+except Exception:
+    DescopeClient = None
+
+load_dotenv()
+logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
+log = logging.getLogger(__name__)
+
+# ------------------ Descope setup (optional) ------------------
+DESCOPE_PROJECT_ID = os.getenv("DESCOPE_PROJECT_ID")
+DESCOPE_MANAGEMENT_KEY = os.getenv("DESCOPE_MANAGEMENT_KEY")
+
+descope_client = None
+if DescopeClient and DESCOPE_PROJECT_ID and DESCOPE_MANAGEMENT_KEY:
+    try:
+        descope_client = DescopeClient(project_id=DESCOPE_PROJECT_ID, management_key=DESCOPE_MANAGEMENT_KEY)
+        log.info("Descope client initialized.")
+    except Exception as e:
+        log.error(f"Failed to init Descope client: {e}")
+        descope_client = None
+else:
+    log.warning("Descope client not configured (DESCOPE_PROJECT_ID or DESCOPE_MANAGEMENT_KEY missing).")
+
+# ------------------ MCP server ------------------
 mcp = FastMCP("AlertHandler")
-alert={}
 
-# ========== Descope Setup ==========
-PROJECT_ID = "P32Dj1SFaOxhwz4v0i9D6jseEJny"
-MANAGEMENT_KEY = os.getenv("DESCOPE_MANAGEMENT_KEY")  # required for user blocking/unblocking
-descope = DescopeClient(project_id=PROJECT_ID, management_key=MANAGEMENT_KEY)
-
-# ========== Tools ==========
-
-@mcp.tool()
-def logoutaccount(session_token: str,userid: str,alert: dict) -> str:
-    """Logout a user by invalidating their session token"""
+# ------------------ Helpers ------------------
+def _notify_user(user_id: str, message: str) -> None:
+    """Notify user via mail_sender_agent if available. Non-fatal on error."""
+    if not mail_sender_agent:
+        log.warning("mail_sender_agent not available — skipping notification.")
+        return
     try:
-        descope.logout(session_token)
-        prompt = (
-                f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity and notified already : {alert} Your account is being logged out and enable multi factor autheentication for security reason. Regards, ZeroTrust Security Monitoring Team, here add the button appeal and on cick the button should redirect to http://34.44.88.193/appeal"
-            )
-        mail_sender_agent(user_id=userid,message=prompt)
-        return "✅ User logged out successfully"
+        # Try common call signatures
+        try:
+            mail_sender_agent(user_id, message)  # positional
+        except TypeError:
+            # fallback to named args if the function expects them
+            try:
+                mail_sender_agent(email_id=user_id, message=message)
+            except Exception:
+                mail_sender_agent(user_id=user_id, message=message)
+        log.info(f"Notification sent to {user_id}.")
     except Exception as e:
-        return f"❌ Logout failed: {str(e)}"
+        log.exception(f"Failed to notify {user_id}: {e}")
 
 
-@mcp.tool()
-def forward_to_soc() -> str:
-    """Forward alert to SOC team"""
-    # (Here you could push alert into SOC queue or DB)
-    return "📨 Alert forwarded to SOC successfully"
+def _get_user_from_alert(alert: Dict[str, Any]) -> Optional[str]:
+    """Try multiple keys to extract a user identifier from the alert payload."""
+    for key in ("user", "user_id", "userid", "email", "email_id", "account"):
+        if alert.get(key):
+            return str(alert.get(key))
+    return None
 
 
-@mcp.tool()
-def remove_block(userid: str) -> str:
-    """Remove block from a user account"""
-    try:
-        descope.management.user.update_status(userid, "enabled")
-        return f"✅ Block removed for user {userid}"
-    except Exception as e:
-        return f"❌ Failed to remove block: {str(e)}"
-
-
-@mcp.tool()
-def permanently_block_the_user(userid: str) -> str:
-    """Block the user account permanently"""
-    try:
-        descope.management.user.update_status(userid, "disabled")
-
-        prompt = (
-                f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity and notified already : {alert} Your account blocked permanently because of this. Regards, ZeroTrust Security Monitoring Team, here add the button appeal and on cick the button should redirect to http://34.44.88.193/appeal"
-            )
-        
-        mail_sender_agent(user_id=userid,message=prompt)
-        return f"🚫 Permanently blocked user {userid}"
-    except Exception as e:
-        return f"❌ Failed to block user: {str(e)}"
-
-import threading, time
-
-@mcp.tool()
-def temporarily_block_the_user(userid: str, duration: int = 600) -> str:
-    """Block the user account temporarily for a given duration (seconds)"""
-    try:
-        descope.management.user.update_status(userid, "disabled")
-
-        # Background task to re-enable after duration
-        def unblock_later():
-            time.sleep(duration)
-            descope.management.user.update_status(userid, "enabled")
-
-        threading.Thread(target=unblock_later, daemon=True).start()
-
-        prompt = (
-            f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity: {alert}. Your account was blocked temporarily. Regards, ZeroTrust Security Monitoring Team. Click here to appeal: http://34.44.88.193/appeal"
-        )
-        mail_sender_agent(user_id=userid, message=prompt)
-
-        return f"⏳ Temporarily blocked {userid} for {duration} seconds"
-    except Exception as e:
-        return f"❌ Temporary block failed: {str(e)}"
-
-
-@mcp.tool()
-def log_the_alert_no_block(employee_id: str, session_token: str) -> str:
+def _get_confidence(alert: Dict[str, Any]) -> float:
     """
-    Log the alert, log the user out, and enforce MFA on next login.
+    Extract a confidence score from the alert. Accepts many key names.
+    Normalizes percentages (>1) to 0..1 range if needed.
+    Returns 0.0 if none found or parse fails.
     """
+    for key in ( "confidence_score"):
+        val = alert.get(key)
+        if val is None:
+            continue
+        try:
+            conf = float(val)
+            # normalize if expressed as percentage (0..100)
+            if conf > 1.0:
+                conf = conf / 100.0
+            # clamp
+            return max(0.0, min(1.0, conf))
+        except Exception:
+            continue
+    return 0.0
+
+# ------------------ Tools (registered with MCP) ------------------
+
+@mcp.tool()
+def permanently_block_user(user_id: str, alert: Optional[Dict[str, Any]] = None) -> str:
+    """Permanently block a user (Descope) and notify them."""
     try:
-        # 1. Log the alert
-        log_msg = f"📝 Logged alert for employee {employee_id}, no block applied"
+        if not descope_client:
+            msg = "Descope not configured — cannot permanently block."
+            log.warning(msg)
+            return msg
 
-        # 2. Logout (invalidate session token)
-        descope.logout(session_token)
+        descope_client.management.user.update_status(user_id, "disabled")
+        msg = f"User {user_id} permanently blocked."
+        log.info(msg)
 
-        # 3. Enforce MFA for the user on next login
-        descope.management.user.update_mfa(
-            identifier=employee_id,
-            totp=True,   # force TOTP MFA (Google Authenticator, etc.)
-            phone=True   # force phone MFA if needed
+        # Notify user
+        body = (
+            f"Dear {user_id},\n\n"
+            "We detected high-confidence suspicious activity and have permanently blocked your account.\n"
+            "If you believe this is a mistake, please appeal here: http://34.44.88.193/appeal\n\n"
+            "Regards,\nZeroTrust Security Team"
         )
+        _notify_user(user_id, body)
 
-        return f"{log_msg}. ✅ User {employee_id} logged out and MFA enforced."
+        # Optionally log to DB
+        if db_controller_agent:
+            try:
+                db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','permanent_block','{alert}')")
+            except Exception:
+                log.exception("db_controller_agent failed to log permanent block.")
+
+        return msg
     except Exception as e:
-        return f"❌ Failed to log alert and enforce MFA: {str(e)}"
+        log.exception("Error in permanently_block_user")
+        return f"Failed to permanently block {user_id}: {e}"
 
 
-# ========== Alert Handler Agent ==========
+@mcp.tool()
+def temporarily_block_user(user_id: str, duration: int = 3600, alert: Optional[Dict[str, Any]] = None) -> str:
+    """Temporarily block a user and schedule re-enable after `duration` seconds."""
+    try:
+        if not descope_client:
+            msg = "Descope not configured — cannot temporarily block."
+            log.warning(msg)
+            return msg
 
-def alert_handler_agent(alert1: dict):
-    global alert
-    alert=alert1
-    """This agent decides what action to take"""
-    model_id = "llama-3.3-70b-versatile"
-    load_dotenv()
-    groq_api_key = os.getenv("GROQ_API_KEY")
+        descope_client.management.user.update_status(user_id, "disabled")
+        msg = f"User {user_id} temporarily blocked for {duration} seconds."
+        log.info(msg)
 
-    agent = Agent(
-        name="Block handler",
-        role="Analyse the given alert data and decide what action to take using available tools",
-        model=Groq(id=model_id, api_key=groq_api_key),
-        tools=[permanently_block_the_user, temporarily_block_the_user, log_the_alert_no_block,remove_block,forward_to_soc,remove_block],
-        markdown=True,
-    )
+        # Schedule unblocking
+        def _unblock():
+            try:
+                descope_client.management.user.update_status(user_id, "enabled")
+                log.info(f"User {user_id} re-enabled after temporary block.")
+            except Exception:
+                log.exception(f"Failed to re-enable {user_id} after temporary block.")
 
-    # Debug: ask it what tools it has
-    # agent.print_response("List the available tools")
+        t = threading.Timer(duration, _unblock)
+        t.daemon = True
+        t.start()
 
-    # Pass the alert to the agent for decision
-    agent.print_response(f"Handle this alert: {alert1} proprly, and do the action promptly")
+        # Notify
+        body = (
+            f"Dear {user_id},\n\n"
+            "We detected suspicious activity and temporarily blocked your account.\n"
+            f"It will be re-enabled automatically after {duration} seconds.\n"
+            "To appeal, visit: http://34.44.88.193/appeal\n\nRegards,\nZeroTrust Security Team"
+        )
+        _notify_user(user_id, body)
 
-    return "✅ Status from AlertHandler: Successfully executed"
+        if db_controller_agent:
+            try:
+                db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','temporary_block','{alert}')")
+            except Exception:
+                log.exception("db_controller_agent failed to log temporary block.")
+
+        return msg
+    except Exception as e:
+        log.exception("Error in temporarily_block_user")
+        return f"Failed to temporarily block {user_id}: {e}"
+
+@mcp.tool()
+def log_alert_only(user_id: str, alert: Optional[Dict[str, Any]] = None) -> str:
+    """Log the alert in DB or logs and optionally force logout/enforce MFA (non-blocking)."""
+    try:
+        log_msg = f"Logged alert for {user_id}: {alert}"
+        log.info(log_msg)
+
+        # Optionally persist to DB
+        if db_controller_agent:
+            try:
+                db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','log_only','{alert}')")
+            except Exception:
+                log.exception("db_controller_agent failed to log alert-only event.")
+
+        # Optionally notify the user that we logged and enforced additional checks
+        _notify_user(user_id, f"Dear {user_id}, suspicious activity was observed and logged for review. If you did not perform this activity, please appeal: http://34.44.88.193/appeal")
+
+        return f"Alert logged for {user_id}"
+    except Exception as e:
+        log.exception("Error in log_alert_only")
+        return f"Failed to log alert for {user_id}: {e}"
+
+@mcp.tool()
+def remove_block(user_id: str) -> str:
+    """Remove a block (enable user)."""
+    try:
+        if not descope_client:
+            msg = "Descope not configured — cannot remove block."
+            log.warning(msg)
+            return msg
+        descope_client.management.user.update_status(user_id, "enabled")
+        log.info(f"Removed block for user {user_id}")
+        _notify_user(user_id, "Your account has been re-enabled by the security team.")
+        return f"Block removed for {user_id}"
+    except Exception as e:
+        log.exception("Error in remove_block")
+        return f"Failed to remove block for {user_id}: {e}"
+
+@mcp.tool()
+def forward_to_soc(alert: Dict[str, Any]) -> str:
+    """Forward alert to SOC — placeholder to push to queue or ticketing system."""
+    try:
+        # Replace with your SOC integration
+        log.info(f"Forwarding to SOC: {alert}")
+        # db_controller_agent or queue push could happen here
+        return "Forwarded to SOC"
+    except Exception as e:
+        log.exception("Error in forward_to_soc")
+        return f"Failed to forward to SOC: {e}"
+
+@mcp.tool()
+def logout_account(session_token: str, user_id: Optional[str] = None, alert: Optional[Dict[str, Any]] = None) -> str:
+    """Invalidate a session token (logout)."""
+    try:
+        if not descope_client:
+            msg = "Descope not configured — cannot logout the session."
+            log.warning(msg)
+            return msg
+        descope_client.logout(session_token)
+        if user_id:
+            _notify_user(user_id, "You have been logged out due to suspicious activity. Please reauthenticate and enable MFA.")
+        return "Session invalidated"
+    except Exception as e:
+        log.exception("Error in logout_account")
+        return f"Failed to logout session: {e}"
+
+# ------------------ Decision function (callable directly) ------------------
+
+def alert_handler_agent(alert: Dict[str, Any], temp_duration: int = 3600) -> str:
+    """
+    Decide action based on confidence score in `alert` and call the proper tool.
+    Returns a summary string.
+    """
+    if not isinstance(alert, dict):
+        return "Invalid alert payload (expected dict)."
+
+    user_id = _get_user_from_alert(alert)
+    if not user_id:
+        log.warning("No user identifier found in alert payload.")
+        return "No user identifier found in alert."
+
+    confidence = _get_confidence(alert)
+    log.info(f"Alert for user={user_id} confidence={confidence:.3f}")
+
+    try:
+        if confidence >= 0.85:
+            result = permanently_block_user(user_id, alert)
+            action = "permanent_block"
+        elif confidence >= 0.6:
+            result = temporarily_block_user(user_id, duration=temp_duration, alert=alert)
+            action = "temporary_block"
+        else:
+            result = log_alert_only(user_id, alert)
+            action = "log_only"
+
+        summary = f"Decision: {action}; confidence={confidence:.3f}; result={result}"
+        log.info(summary)
+        return summary
+    except Exception as e:
+        log.exception("Error in alert_handler_agent")
+        return f"Handler error: {e}"
 
 
-# ========== Run Example ==========
+# # ------------------ Run MCP server (when executed) ------------------
 # if __name__ == "__main__":
-#     test_alert = {"id": 1, "name": "phishing alert", "user": "bob@example.com"}
-#     print(alert_handler(test_alert))
+#     import asyncio
+
+#     log.info("Starting MCP AlertHandler server (stdio transport)...")
+#     # This will register tools and run the MCP server on stdio (used when spawned by client)
+#     asyncio.run(mcp.run_async(transport="stdio"))
