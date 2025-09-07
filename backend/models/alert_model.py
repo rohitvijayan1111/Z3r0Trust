@@ -12,19 +12,20 @@ class Alert:
             cursor = conn.cursor()
             query = """
                 INSERT INTO alerts 
-                (alert_name, confidence_score, timestamp, user_name, email, ip, location, device, action, status, failed_count, blockedIP, blockedUser)
+                (alert_id, alert_name, confidence_score, last_time, user, ip, location, device, action, status, failed_count, blockedIP, blockedUser)
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """
             cursor.execute(query, (
+                alert_data.get('alert_id'),
                 alert_data.get("alert_name"),
                 alert_data.get("confidence_score"),
-                alert_data.get("timestamp", datetime.utcnow()),
+                alert_data.get("last_time", datetime.utcnow()),
                 alert_data.get("user"),
                 alert_data.get("ip"),
-                alert_data.get("location"),
-                alert_data.get("device"),
-                alert_data.get("action"),
-                alert_data.get("status"),
+                alert_data.get("locations"),
+                str(alert_data.get("devices")),
+                alert_data.get("actions"),
+                alert_data.get("statuses"),
                 alert_data.get("failed_count", 0),
                 alert_data.get("blockedIP", False),
                 alert_data.get("blockedUser", False)
