@@ -150,7 +150,7 @@ def webhook():
 
             gemini_response = gemini_model.generate_content(f"{alert}, generate this report as a detailed summary")
             narrative_summary = gemini_response.text.strip()
-            alert['summary']=narrative_summary
+            # alert['summary']=narrative_summary
             alert = alert["result"]
             alert_id = alert.get("alert_id")
             user=alert.get("user")
