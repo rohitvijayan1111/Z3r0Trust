@@ -20,7 +20,6 @@ class Alert:
                 alert_data.get("confidence_score"),
                 alert_data.get("timestamp", datetime.utcnow()),
                 alert_data.get("user"),
-                alert_data.get("email"),
                 alert_data.get("ip"),
                 alert_data.get("location"),
                 alert_data.get("device"),

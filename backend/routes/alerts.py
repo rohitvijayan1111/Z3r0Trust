@@ -15,16 +15,20 @@ def get_alerts():
 # Fetch alerts from external API and store in DB
 @alerts_bp.route("/alerts/fetch", methods=["POST"])
 def fetch_and_store_alerts():
-    import requests
-    external_api_url = "https://external-api.com/alerts"  # replace with actual
+    # import requests
+    # external_api_url = "https://external-api.com/alerts"  # replace with actual
     try:
-        resp = requests.get(external_api_url)
-        if resp.status_code == 200:
-            alerts_data = resp.json()
-            for alert in alerts_data:
-                Alert.insert_alert(alert)
-            return jsonify({"message": "Alerts fetched and stored successfully"}), 200
-        return jsonify({"error": "Failed to fetch alerts"}), 400
+        # resp = requests.get(external_api_url)
+        # if resp.status_code == 200:
+        #     alerts_data = resp.json()
+        #     for alert in alerts_data:
+                # Alert.insert_alert(alert)
+        #     return jsonify({"message": "Alerts fetched and stored successfully"}), 200
+        # return jsonify({"error": "Failed to fetch alerts"}), 400
+        data=request.get_json()
+        Alert.insert_alert(data)
+        return jsonify({"message": "Alerts stored successfully"}), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

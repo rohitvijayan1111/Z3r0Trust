@@ -90,7 +90,7 @@ mcp = FastMCP("AlertHandler")
 alert={}
 
 # ========== Descope Setup ==========
-PROJECT_ID = "P32GTfUg5UE6jTwQNzhPJzQXDhf2"
+PROJECT_ID = "P32Dj1SFaOxhwz4v0i9D6jseEJny"
 MANAGEMENT_KEY = os.getenv("DESCOPE_MANAGEMENT_KEY")  # required for user blocking/unblocking
 descope = DescopeClient(project_id=PROJECT_ID, management_key=MANAGEMENT_KEY)
 
@@ -104,8 +104,7 @@ def logoutaccount(session_token: str,userid: str,alert: dict) -> str:
         prompt = (
                 f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity and notified already : {alert} Your account is being logged out and enable multi factor autheentication for security reason. Regards, ZeroTrust Security Monitoring Team, here add the button appeal and on cick the button should redirect to http://34.44.88.193/appeal"
             )
-        
-        mail_sender_agent(user_id=userid,prompt=prompt)
+        mail_sender_agent(user_id=userid,message=prompt)
         return "✅ User logged out successfully"
     except Exception as e:
         return f"❌ Logout failed: {str(e)}"
@@ -161,12 +160,11 @@ def temporarily_block_the_user(userid: str, duration: int = 600) -> str:
         prompt = (
             f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity: {alert}. Your account was blocked temporarily. Regards, ZeroTrust Security Monitoring Team. Click here to appeal: http://34.44.88.193/appeal"
         )
-        mail_sender_agent(user_id=userid, prompt=prompt)
+        mail_sender_agent(user_id=userid, message=prompt)
 
         return f"⏳ Temporarily blocked {userid} for {duration} seconds"
     except Exception as e:
         return f"❌ Temporary block failed: {str(e)}"
-
 
 
 @mcp.tool()
@@ -191,7 +189,6 @@ def log_the_alert_no_block(employee_id: str, session_token: str) -> str:
         return f"{log_msg}. ✅ User {employee_id} logged out and MFA enforced."
     except Exception as e:
         return f"❌ Failed to log alert and enforce MFA: {str(e)}"
-
 
 
 # ========== Alert Handler Agent ==========
