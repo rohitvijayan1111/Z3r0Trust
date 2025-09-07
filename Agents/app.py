@@ -149,6 +149,7 @@ def webhook():
             print("reached inside")
             print(alert)
 
+
             # gemini_response = gemini_model.generate_content(f"{alert}, generate this report as a detailed summary")
             # narrative_summary = gemini_response.text.strip()
             # alert['summary']=narrative_summary
