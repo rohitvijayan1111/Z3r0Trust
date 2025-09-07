@@ -31,11 +31,12 @@ class Alert:
                 alert_data.get("blockedUser", False)
             ))
             conn.commit()
-            return True
+            return {'status':True}
         except Exception as e:
             print("Error inserting alert:", e)
-            return False
+            return {'status':False,'e':e}
         finally:
+
             cursor.close()
             conn.close()
 

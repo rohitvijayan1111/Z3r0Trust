@@ -26,8 +26,11 @@ def fetch_and_store_alerts():
         #     return jsonify({"message": "Alerts fetched and stored successfully"}), 200
         # return jsonify({"error": "Failed to fetch alerts"}), 400
         data=request.get_json()
-        Alert.insert_alert(data)
-        return jsonify({"message": "Alerts stored successfully"}), 200
+        res=Alert.insert_alert(data)
+        if(res.get('status')):
+            return jsonify({"message": "Alerts stored successfully"}), 200
+        else:
+            return jsonify({'e':res.get('e')}),200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
