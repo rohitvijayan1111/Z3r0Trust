@@ -83,11 +83,11 @@ from mcp.server.fastmcp import FastMCP
 from descope import DescopeClient
 import os
 import time
-
 from mail_sender_agent import mail_sender_agent
 
 # ========== MCP Server ==========
 mcp = FastMCP("AlertHandler")
+alert={}
 
 # ========== Descope Setup ==========
 PROJECT_ID = "P32GTfUg5UE6jTwQNzhPJzQXDhf2"
@@ -133,12 +133,12 @@ def permanently_block_the_user(userid: str) -> str:
     """Block the user account permanently"""
     try:
         descope.management.user.update_status(userid, "disabled")
-       
+
         prompt = (
                 f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity and notified already : {alert} Your account blocked permanently because of this. Regards, ZeroTrust Security Monitoring Team, here add the button appeal and on cick the button should redirect to http://34.44.88.193/appeal"
             )
         
-        mail_sender_agent(user_id=userid,prompt=prompt)
+        mail_sender_agent(user_id=userid,message=prompt)
         return f"🚫 Permanently blocked user {userid}"
     except Exception as e:
         return f"❌ Failed to block user: {str(e)}"
@@ -196,7 +196,9 @@ def log_the_alert_no_block(employee_id: str, session_token: str) -> str:
 
 # ========== Alert Handler Agent ==========
 
-def alert_handler_agent(alert: dict):
+def alert_handler_agent(alert1: dict):
+    global alert
+    alert=alert1
     """This agent decides what action to take"""
     model_id = "llama-3.3-70b-versatile"
     load_dotenv()
@@ -214,7 +216,7 @@ def alert_handler_agent(alert: dict):
     # agent.print_response("List the available tools")
 
     # Pass the alert to the agent for decision
-    agent.print_response(f"Handle this alert: {alert} proprly")
+    agent.print_response(f"Handle this alert: {alert1} proprly, and do the action promptly")
 
     return "✅ Status from AlertHandler: Successfully executed"
 
