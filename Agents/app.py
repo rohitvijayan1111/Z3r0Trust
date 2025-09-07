@@ -135,23 +135,24 @@ def handle_appeal():
 @app.route("/webhook",methods=["post"])
 def webhook():
     try:
-        alerts=request.get_json()
+        alerts=request.get_json().get("result")
 
         print(alerts)
         if isinstance(alerts, dict):
             alerts = [alerts]
 
-        print(json.dumps(alerts, indent=4))  # pretty print
+        # print(json.dumps(alerts, indent=4))  # pretty print
 
         processed, suppressed = [], []
 
         for alert in alerts:
+            print("reached inside")
             print(alert)
 
-            gemini_response = gemini_model.generate_content(f"{alert}, generate this report as a detailed summary")
-            narrative_summary = gemini_response.text.strip()
-            alert['summary']=narrative_summary
-            alert = alert["result"]
+            # gemini_response = gemini_model.generate_content(f"{alert}, generate this report as a detailed summary")
+            # narrative_summary = gemini_response.text.strip()
+            # alert['summary']=narrative_summary
+            # alert = alert["result"]
             alert_id = alert.get("alert_id")
             user=alert.get("user")
             alert_name = alert.get("alert_name")
@@ -162,15 +163,15 @@ def webhook():
                 print("XXXXXXXXXX Duplicate detected")
                 continue
 
-            alert_data = apply_policy(alert)
-            processed.append(alert_data)
+            # alert_data = apply_policy(alert)
+            # processed.append(alert_data)
 
+            print("reached storage post")
+            url = "http://34.93.9.19/api/alerts/fetch"
 
-            url = "http://34.93.9.19/api/fetch/store"
+            response = requests.post(url, alert)
 
-            # response = requests.post(url, alert)
-
-            # print(response)
+            print(response)
             prompt = (
                 f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alert} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
             )
