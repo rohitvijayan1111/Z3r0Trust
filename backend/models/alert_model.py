@@ -18,17 +18,17 @@ class Alert:
             cursor.execute(query, (
                 alert_data.get('alert_id'),
                 alert_data.get("alert_name"),
-                alert_data.get("confidence_score"),
+                int(alert_data.get("confidence_score")),
                 alert_data.get("last_time", datetime.utcnow()),
                 alert_data.get("user"),
                 alert_data.get("ip"),
                 alert_data.get("locations"),
                 str(alert_data.get("devices")),
                 alert_data.get("actions"),
-                alert_data.get("statuses"),
-                alert_data.get("failed_count", 0),
-                alert_data.get("blockedIP", False),
-                alert_data.get("blockedUser", False)
+                0 if alert_data.get("statuses")=='failed' else 1,
+                int(alert_data.get("failed_count", '0')),
+                alert_data.get("blockedIP", 0),
+                alert_data.get("blockedUser", 0)
             ))
             conn.commit()
             return {'status':True}
