@@ -18,4 +18,4 @@ mcp
 nest_asyncio
 uvicorn
 typing
-
+flask[async]

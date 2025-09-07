@@ -132,9 +132,10 @@ def handle_appeal():
 
 
 
-@app.post("/webhook")
-async def webhook(alerts: Union[dict, List[dict]]):
+@app.route("/webhook",methods=["post"])
+def webhook():
     try:
+        alerts=request.get_json()
 
         print(alerts)
         if isinstance(alerts, dict):
