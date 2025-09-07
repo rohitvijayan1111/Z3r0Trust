@@ -112,7 +112,7 @@ def handle_appeal():
     print("Appeals received:")
     print(f"1: {subject1} - {content1}")
 
-    prompt = f"add the entry to the table 'appeal'(id	int,subject	varchar(200), content	varchar(2000), response_id	int, status	tinyint(1)), here the subject {subject1}, content {content1}, response_id is 5, status 1"
+    prompt = f"add the entry to the table 'appeal'(id	int,subject	varchar(200), content	varchar(2000), status	tinyint(1)), here the subject {subject1}, content {content1}, status 1"
     db_controller_agent(prompt=prompt)
 
     prompt = f"mail to {emailid} as appeal recieved successfully, forwarded to our AI agent and SOC, will get back to you within two working days, thank you, ZeroTrust team"
