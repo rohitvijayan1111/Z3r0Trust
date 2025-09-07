@@ -30,7 +30,7 @@ def fetch_and_store_alerts():
         if(res.get('status')):
             return jsonify({"message": "Alerts stored successfully"}), 200
         else:
-            return jsonify({'e':res.get('e')}),200
+            return jsonify({'e':str(res.get('e'))}),500
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
