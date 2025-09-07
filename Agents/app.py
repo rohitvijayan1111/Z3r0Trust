@@ -132,9 +132,10 @@ def handle_appeal():
 
 
 
-@app.post("/webhook")
-async def webhook(alerts: Union[dict, List[dict]]):
+@app.route("/webhook",methods=["post"])
+def webhook():
     try:
+        alerts=request.get_json()
 
         print(alerts)
         if isinstance(alerts, dict):
@@ -149,7 +150,7 @@ async def webhook(alerts: Union[dict, List[dict]]):
             gemini_response = gemini_model.generate_content(f"{alert}, generate this report as a detailed summary")
             narrative_summary = gemini_response.text.strip()
             alert['summary']=narrative_summary
-            alert=alert = alert["result"]
+            alert= alert["result"]
             alert_id = alert.get("alert_id")
             user=alert.get("user")
             alert_name = alert.get("alert_name")
@@ -163,18 +164,19 @@ async def webhook(alerts: Union[dict, List[dict]]):
             alert_data = apply_policy(alert)
             processed.append(alert_data)
 
+            
+            # url = "http://127.0.0.1/route_name"
 
-            url = "http://127.0.0.1/route_name"
+            # response = requests.post(url, alert)
 
-            response = requests.post(url, alert)
-
-            print(response)
+            # print(response)
             prompt = (
                 f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alert} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
             )
 
             mail_sender_agent(alert.get("user"),prompt)
             print(f"✅ Processed alert: {alert_name} for {alert.get('user')}")
+            print("\nreached alert agent\n")
             alert_handler_agent(alert=alert)
 
         return {
@@ -197,5 +199,5 @@ async def webhook(alerts: Union[dict, List[dict]]):
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=2222, debug=True)
 
