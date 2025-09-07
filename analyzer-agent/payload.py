@@ -13,7 +13,7 @@ INDEX = "zerotrust_logs"
 
 
 def password_bruteforce():
-    user = "bob@example.com"
+    user = "broh22012.it@rmkec.ac.in"
     geo = "UK"
     devices = ["Chrome-Windows", "Firefox-Linux", "Edge-Windows", "Safari-Mac", "Opera-Windows"]
 
@@ -27,7 +27,7 @@ def password_bruteforce():
             "sourcetype": "_json",
             "index": INDEX,
             "event": {
-                "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),  # human readable UTC
+                "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),  
                 "username": user,
                 "Ip Address": f"192.168.1.{10}",
                 "Geo Location": geo,
@@ -273,6 +273,169 @@ def simulate_impossible_travel():
     try:
         response = requests.post(SPLUNK_URL, headers=headers, data=body, verify=False)
         print("Impossible Travel Simulation ->", response.status_code, response.text)
+    except requests.exceptions.RequestException as e:
+        print("Error:", str(e))
+
+
+
+def privilege_escalation():
+    user = "alice@example.com"   # Normal user (not admin)
+    base_time = datetime.now(UTC)
+    events = []
+
+    # --- Suspicious admin actions by a normal user ---
+    endpoints = ["/admin/delete", "/admin/update", "/admin/users/123"]
+
+    for i, ep in enumerate(endpoints):
+        event_time = base_time + timedelta(seconds=i * 10)
+        payload = {
+            "time": int(event_time.timestamp()),
+            "sourcetype": "_json",
+            "index": INDEX,
+            "event": {
+                "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "username": user,
+                "Ip Address": "192.168.1.50",
+                "Geo Location": "US",
+                "endpoint": ep,               # <-- matches your SPL
+                "Response": "success",        # <-- maps to 'status'
+                "device": "Chrome-Windows"
+            }
+        }
+        events.append(json.dumps(payload))
+
+    # --- Send to Splunk HEC ---
+    body = "\n".join(events)
+    headers = {"Authorization": f"Splunk {HEC_TOKEN}", "Content-Type": "application/json"}
+
+    try:
+        response = requests.post(SPLUNK_URL, headers=headers, data=body, verify=False)
+        print("Privilege Escalation ->", response.status_code, response.text)
+    except requests.exceptions.RequestException as e:
+        print("Error:", str(e))
+
+def account_takeover():
+    user = "alice@example.com"
+    base_time = datetime.now(UTC)
+    events = []
+
+    # 5+ failed logins from same IP/device/geo
+    for i in range(5):
+        event_time = base_time + timedelta(seconds=i * 5)
+        payload = {
+            "time": int(event_time.timestamp()),
+            "sourcetype": "_json",
+            "index": INDEX,
+            "event": {
+                "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "username": user,
+                "Ip Address": "192.168.1.10",
+                "Geo Location": "UK",
+                "Request type": "login_attempt",
+                "Response": "failed",
+                "device": "Chrome-Windows"
+            }
+        }
+        events.append(json.dumps(payload))
+
+    # Success from NEW IP + NEW device + NEW geo (ATO trigger)
+    event_time = base_time + timedelta(seconds=40)
+    payload = {
+        "time": int(event_time.timestamp()),
+        "sourcetype": "_json",
+        "index": INDEX,
+        "event": {
+            "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "username": user,
+            "Ip Address": "203.0.113.55",       # new IP
+            "Geo Location": "US",               # new Geo
+            "Request type": "login_attempt",
+            "Response": "success",              # sudden success
+            "device": "Safari-Mac"              # new Device
+        }
+    }
+    events.append(json.dumps(payload))
+
+    # Optional: another ATO case (different user)
+    for i in range(6):
+        event_time = base_time + timedelta(minutes=1, seconds=i * 5)
+        payload = {
+            "time": int(event_time.timestamp()),
+            "sourcetype": "_json",
+            "index": INDEX,
+            "event": {
+                "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "username": "bob@example.com",
+                "Ip Address": "198.51.100.77",
+                "Geo Location": "IN",
+                "Request type": "login_attempt",
+                "Response": "failed",
+                "device": "Edge-Windows"
+            }
+        }
+        events.append(json.dumps(payload))
+
+    event_time = base_time + timedelta(minutes=2)
+    payload = {
+        "time": int(event_time.timestamp()),
+        "sourcetype": "_json",
+        "index": INDEX,
+        "event": {
+            "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "username": "bob@example.com",
+            "Ip Address": "192.0.2.44",         # new IP
+            "Geo Location": "SG",               # new Geo
+            "Request type": "login_attempt",
+            "Response": "success",
+            "device": "Firefox-Android"         # new Device
+        }
+    }
+    events.append(json.dumps(payload))
+
+    # Send to Splunk HEC
+    body = "\n".join(events)
+    headers = {"Authorization": f"Splunk {HEC_TOKEN}", "Content-Type": "application/json"}
+
+    try:
+        response = requests.post(SPLUNK_URL, headers=headers, data=body, verify=False)
+        print("Account Takeover (ATO) ->", response.status_code, response.text)
+    except requests.exceptions.RequestException as e:
+        print("Error:", str(e))
+
+
+def privilege_escalation():
+    user = "alice@example.com"   # Normal user (not admin)
+    base_time = datetime.now(UTC)
+    events = []
+
+    # --- Suspicious admin actions by a normal user ---
+    endpoints = ["/admin/delete", "/admin/update", "/admin/users/123"]
+
+    for i, ep in enumerate(endpoints):
+        event_time = base_time + timedelta(seconds=i * 10)
+        payload = {
+            "time": int(event_time.timestamp()),
+            "sourcetype": "_json",
+            "index": INDEX,
+            "event": {
+                "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "username": user,
+                "Ip Address": "192.168.1.50",
+                "Geo Location": "US",
+                "endpoint": ep,               # <-- matches your SPL
+                "Response": "success",        # <-- maps to 'status'
+                "device": "Chrome-Windows"
+            }
+        }
+        events.append(json.dumps(payload))
+
+    # --- Send to Splunk HEC ---
+    body = "\n".join(events)
+    headers = {"Authorization": f"Splunk {HEC_TOKEN}", "Content-Type": "application/json"}
+
+    try:
+        response = requests.post(SPLUNK_URL, headers=headers, data=body, verify=False)
+        print("Privilege Escalation ->", response.status_code, response.text)
     except requests.exceptions.RequestException as e:
         print("Error:", str(e))
 

@@ -168,15 +168,16 @@ def webhook():
 
             url = "http://34.93.9.19/api/fetch/store"
 
-            response = requests.post(url, alert)
+            # response = requests.post(url, alert)
 
-            print(response)
+            # print(response)
             prompt = (
                 f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alert} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
             )
 
             mail_sender_agent(alert.get("user"),prompt)
             print(f"✅ Processed alert: {alert_name} for {alert.get('user')}")
+            print("\nreached alert agent\n")
             alert_handler_agent(alert=alert)
 
         return {
@@ -199,5 +200,5 @@ def webhook():
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=2222, debug=True)
 
