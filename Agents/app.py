@@ -185,6 +185,7 @@ async def webhook(alerts: Union[dict, List[dict]]):
             "suppressed": suppressed,
         }
     except Exception as e:
+        print("exception recieved")
         print(e)
         return e
 
