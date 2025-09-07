@@ -155,15 +155,15 @@ def webhook():
             alert_id = alert.get("alert_id")
             user=alert.get("user")
             alert_name = alert.get("alert_name")
-            if not alert_id or not alert_name:
-                continue
-            if is_duplicate(alert_id, alert_name):
-                suppressed.append(alert_id)
-                print("XXXXXXXXXX Duplicate detected")
-                continue
+            # if not alert_id or not alert_name:
+            #     continue
+            # if is_duplicate(alert_id, alert_name):
+            #     suppressed.append(alert_id)
+            #     print("XXXXXXXXXX Duplicate detected")
+            #     continue
 
             # alert_data = apply_policy(alert)
-            processed.append(alert_data)
+            processed.append(alert)
 
             print("reached storage post")
             url = "http://34.93.9.19/api/alerts/fetch"
