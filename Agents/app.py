@@ -27,7 +27,7 @@ gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 nest_asyncio.apply()
 
-PROJECT_ID = "P32GTfUg5UE6jTwQNzhPJzQXDhf2"
+PROJECT_ID = "P32Dj1SFaOxhwz4v0i9D6jseEJny"
 descope = DescopeClient(project_id=PROJECT_ID)
 
 server_params = StdioServerParameters(
@@ -141,16 +141,17 @@ def webhook():
         if isinstance(alerts, dict):
             alerts = [alerts]
 
-    
         print(json.dumps(alerts, indent=4))  # pretty print
 
         processed, suppressed = [], []
 
         for alert in alerts:
+            print(alert)
+
             gemini_response = gemini_model.generate_content(f"{alert}, generate this report as a detailed summary")
             narrative_summary = gemini_response.text.strip()
             alert['summary']=narrative_summary
-            alert= alert["result"]
+            alert = alert["result"]
             alert_id = alert.get("alert_id")
             user=alert.get("user")
             alert_name = alert.get("alert_name")
@@ -164,8 +165,8 @@ def webhook():
             alert_data = apply_policy(alert)
             processed.append(alert_data)
 
-            
-            # url = "http://127.0.0.1/route_name"
+
+            url = "http://34.93.9.19/api/fetch/store"
 
             # response = requests.post(url, alert)
 

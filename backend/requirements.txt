@@ -1,0 +1,10 @@
+flask
+flask-cors
+mysql-connector-python
+python-dotenv
+requests
+user-agents
+descope
+fastapi
+pydantic
+uvicorn
