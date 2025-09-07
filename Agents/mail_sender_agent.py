@@ -11,7 +11,6 @@ from server import send_email
 
 load_dotenv()
 
-
 def mail_sender_agent(user_id: str, message: str) -> bool:
     """
     This agent decides what action to take

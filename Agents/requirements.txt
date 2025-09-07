@@ -17,3 +17,5 @@ fastmcp
 mcp
 nest_asyncio
 uvicorn
+typing
+

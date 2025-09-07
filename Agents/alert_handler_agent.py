@@ -84,6 +84,8 @@ from descope import DescopeClient
 import os
 import time
 
+from Agents.mail_sender_agent import mail_sender_agent
+
 # ========== MCP Server ==========
 mcp = FastMCP("AlertHandler")
 
@@ -95,10 +97,15 @@ descope = DescopeClient(project_id=PROJECT_ID, management_key=MANAGEMENT_KEY)
 # ========== Tools ==========
 
 @mcp.tool()
-def logoutaccount(session_token: str) -> str:
+def logoutaccount(session_token: str,userid: str,alert: dict) -> str:
     """Logout a user by invalidating their session token"""
     try:
         descope.logout(session_token)
+        prompt = (
+                f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity and notified already : {alert} Your account is being logged out and enable multi factor autheentication for security reason. Regards, ZeroTrust Security Monitoring Team, here add the button appeal and on cick the button should redirect to http://34.44.88.193/appeal"
+            )
+        
+        mail_sender_agent(user_id=userid,prompt=prompt)
         return "✅ User logged out successfully"
     except Exception as e:
         return f"❌ Logout failed: {str(e)}"
@@ -126,22 +133,40 @@ def permanently_block_the_user(userid: str) -> str:
     """Block the user account permanently"""
     try:
         descope.management.user.update_status(userid, "disabled")
+       
+        prompt = (
+                f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity and notified already : {alert} Your account blocked permanently because of this. Regards, ZeroTrust Security Monitoring Team, here add the button appeal and on cick the button should redirect to http://34.44.88.193/appeal"
+            )
+        
+        mail_sender_agent(user_id=userid,prompt=prompt)
         return f"🚫 Permanently blocked user {userid}"
     except Exception as e:
         return f"❌ Failed to block user: {str(e)}"
 
+import threading, time
 
 @mcp.tool()
 def temporarily_block_the_user(userid: str, duration: int = 600) -> str:
     """Block the user account temporarily for a given duration (seconds)"""
     try:
         descope.management.user.update_status(userid, "disabled")
-        time.sleep(duration)
-        descope.management.user.update_status(userid, "enabled")
+
+        # Background task to re-enable after duration
+        def unblock_later():
+            time.sleep(duration)
+            descope.management.user.update_status(userid, "enabled")
+
+        threading.Thread(target=unblock_later, daemon=True).start()
+
+        prompt = (
+            f"send email to {userid} that Dear {userid} Our monitoring detected suspicious activity: {alert}. Your account was blocked temporarily. Regards, ZeroTrust Security Monitoring Team. Click here to appeal: http://34.44.88.193/appeal"
+        )
+        mail_sender_agent(user_id=userid, prompt=prompt)
+
         return f"⏳ Temporarily blocked {userid} for {duration} seconds"
     except Exception as e:
         return f"❌ Temporary block failed: {str(e)}"
-    
+
 
 
 @mcp.tool()
@@ -181,15 +206,15 @@ def alert_handler_agent(alert: dict):
         name="Block handler",
         role="Analyse the given alert data and decide what action to take using available tools",
         model=Groq(id=model_id, api_key=groq_api_key),
-        tools=[permanently_block_the_user, temporarily_block_the_user, log_the_alert_no_block],
+        tools=[permanently_block_the_user, temporarily_block_the_user, log_the_alert_no_block,remove_block,forward_to_soc,remove_block],
         markdown=True,
     )
 
     # Debug: ask it what tools it has
-    agent.print_response("List the available tools")
+    # agent.print_response("List the available tools")
 
     # Pass the alert to the agent for decision
-    agent.print_response(f"Handle this alert: {alert}")
+    agent.print_response(f"Handle this alert: {alert} proprly")
 
     return "✅ Status from AlertHandler: Successfully executed"
 

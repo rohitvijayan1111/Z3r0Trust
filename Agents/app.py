@@ -1,3 +1,4 @@
+from typing import List, Union
 from flask import Flask, request, jsonify, render_template, Response
 from pydantic import BaseModel
 import os
@@ -9,14 +10,20 @@ from datetime import datetime
 from descope import DescopeClient
 import asyncio
 import nest_asyncio
+import requests
 from db_controller_agent import db_controller_agent
 from app_helper_functions import apply_policy
-from cache import  cache_cleaner
+from cache import  cache_cleaner, is_duplicate
 from alert_handler_agent import alert_handler_agent
 from mail_sender_agent import mail_sender_agent
 from server import send_email,authenticator,retrieve_unread_emails,tools_list
+import google.generativeai as genai
+import json
 
+load_dotenv()
 
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 nest_asyncio.apply()
 
@@ -28,7 +35,7 @@ server_params = StdioServerParameters(
     args=["server.py"],  
 )
 
-load_dotenv()
+
 
 app = Flask(__name__)
 
@@ -96,17 +103,20 @@ def get_email():
 def get_appeal():
     return render_template("appeal.html")
 
-
 @app.route("/appealrequest", methods=["POST"])
 def handle_appeal():
+    emailid  = request.form.get("email")
     subject1 = request.form.get("subject1")
     content1 = request.form.get("content1")
-
+    
     print("Appeals received:")
     print(f"1: {subject1} - {content1}")
 
     prompt = "add the entry to the table 'appeal'(id, subject, content, response_id, status) "
     db_controller_agent(prompt=prompt)
+    
+    prompt = f"mail to {emailid} as appeal recieved successfully, forwarded to our AI agent and SOC, will get back to you within two working days, thank you, ZeroTrust team"
+    mail_sender_agent(emailid,prompt)
 
     # Returning JS alert to close window
     return Response("""
@@ -121,24 +131,62 @@ def handle_appeal():
     """, mimetype="text/html")
 
 
-# --------- Webhook ---------
-@app.route("/webhook", methods=["POST"])
-def webhook():
-    alerts = request.get_json()
-    print(alerts)
 
-    processed, suppressed = [], []
+@app.post("/webhook")
+async def webhook(alerts: Union[dict, List[dict]]):
+    try:
 
-    # (original suppression & processing logic is kept commented in your code)
+        print(alerts)
+        if isinstance(alerts, dict):
+            alerts = [alerts]
 
-    return jsonify({
-        "status": "done",
-        "processed_count": len(processed),
-        "suppressed_count": len(suppressed),
-        "processed": processed,
-        "suppressed": suppressed,
-    })
+    
+        print(json.dumps(alerts, indent=4))  # pretty print
 
+        processed, suppressed = [], []
+
+        for alert in alerts:
+            gemini_response = gemini_model.generate_content(f"{alert}, generate this report as a detailed summary")
+            narrative_summary = gemini_response.text.strip()
+            alert['summary']=narrative_summary
+            alert=alert = alert["result"]
+            alert_id = alert.get("alert_id")
+            user=alert.get("user")
+            alert_name = alert.get("alert_name")
+            if not alert_id or not alert_name:
+                continue
+            if is_duplicate(alert_id, alert_name):
+                suppressed.append(alert_id)
+                print("XXXXXXXXXX Duplicate detected")
+                continue
+
+            alert_data = apply_policy(alert)
+            processed.append(alert_data)
+
+
+            url = "http://127.0.0.1/route_name"
+
+            response = requests.post(url, alert)
+
+            print(response)
+            prompt = (
+                f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alert} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
+            )
+
+            mail_sender_agent(alert.get("user"),prompt)
+            print(f"✅ Processed alert: {alert_name} for {alert.get('user')}")
+            alert_handler_agent(alert=alert)
+
+        return {
+            "status": "done",
+            "processed_count": len(processed),
+            "suppressed_count": len(suppressed),
+            "processed": processed,
+            "suppressed": suppressed,
+        }
+    except Exception as e:
+        print(e)
+        return e
 
 # --------- Background tasks ---------
 # @app.before_first_request
