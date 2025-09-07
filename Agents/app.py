@@ -136,61 +136,62 @@ def handle_appeal():
 def webhook():
     try:
         alerts=request.get_json().get("result")
-
+        
         print(alerts)
-        if isinstance(alerts, dict):
-            alerts = [alerts]
+        # if isinstance(alerts, dict):
+        #     alerts = [alerts]
 
         # print(json.dumps(alerts, indent=4))  # pretty print
 
-        processed, suppressed = [], []
+        # processed, suppressed = [], []
 
-        for alert in alerts:
-            print("reached inside")
-            print(alert)
-            # gemini_response = gemini_model.generate_content(f"{alert}, generate this report as a detailed summary")
-            # narrative_summary = gemini_response.text.strip()
-            # alert['summary']=narrative_summary
-            # alert = alert["result"]
-            alert_id = alert.get("alert_id")
-            user=alert.get("user")
-            alert_name = alert.get("alert_name")
-            if not alert_id or not alert_name:
-                continue
-            if is_duplicate(alert_id, alert_name):
-                suppressed.append(alert_id)
-                print("XXXXXXXXXX Duplicate detected")
-                continue
+        # for alert in alerts:
+        print("reached inside")
+        print(alerts)
+        # gemini_response = gemini_model.generate_content(f"{alert}, generate this report as a detailed summary")
+        # narrative_summary = gemini_response.text.strip()
+        # alert['summary']=narrative_summary
+        # alert = alert["result"]
+        # alert_id = alerts.get("alert_id")
+        user=alerts.get("user")
+        alert_name = alerts.get("alert_name")
+        # if not alert_id or not alert_name:
+        #     continue
+        # if is_duplicate(alert_id, alert_name):
+        #     suppressed.append(alert_id)
+        #     print("XXXXXXXXXX Duplicate detected")
+        #     continue
 
-            # alert_data = apply_policy(alert)
-            # processed.append(alert_data)
+        # alert_data = apply_policy(alert)
+        # processed.append(alert_data)
 
-            print("reached storage post")
-            url = "http://34.93.9.19/api/alerts/fetch"
+        print("reached storage post")
+        url = "http://localhost:5000/api/alerts/fetch"
 
-            response = requests.post(url, alert)
+        response = requests.post(url, json=alerts)
 
-            print(response)
-            prompt = (
-                f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alert} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
-            )
-
-            mail_sender_agent(alert.get("user"),prompt)
-            print(f"✅ Processed alert: {alert_name} for {alert.get('user')}")
-            print("\nreached alert agent\n")
-            alert_handler_agent(alert=alert)
-
-        return {
-            "status": "done",
-            "processed_count": len(processed),
-            "suppressed_count": len(suppressed),
-            "processed": processed,
-            "suppressed": suppressed,
-        }
+        print(response)
+        # return {"res": str(response)}
+        prompt = (
+            f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alerts} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
+        )
+        print("alert reached mail agent")
+        mail_sender_agent(alerts.get("user"),prompt)
+        print(f"✅ Processed alert: {alert_name} for {alerts.get('user')}")
+        print("\nreached alert agent\n")
+        alert_handler_agent(alert=alerts)
+        return {"result":"success"}
+        # return {
+        #     "status": "done",
+        #     "processed_count": len(processed),
+        #     "suppressed_count": len(suppressed),
+        #     "processed": processed,
+        #     "suppressed": suppressed,
+        # }
     except Exception as e:
         print("exception recieved")
         print(e)
-        return e
+        return {'e':str(e)}
 
 # --------- Background tasks ---------
 # @app.before_first_request

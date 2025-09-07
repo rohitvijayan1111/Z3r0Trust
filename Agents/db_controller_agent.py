@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 def db_controller_agent(prompt):
     "This agent only do the modification in the database, but not fetch and show anything, it is for purpose"
-    model_id="llama-3.3-70b-versatile"
+    model_id="Llama-3-Groq-8B-Tool-Use"
     load_dotenv()
     groq_api_key = os.getenv("GROQ_API_KEY")
 
