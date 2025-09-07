@@ -34,7 +34,7 @@ class Alert:
             return {'status':True}
         except Exception as e:
             print("Error inserting alert:", e)
-            return {'status':False,'e':e}
+            return {'status':False,'e':str(e)}
         finally:
 
             cursor.close()
