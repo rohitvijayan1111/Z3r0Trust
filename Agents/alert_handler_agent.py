@@ -470,19 +470,19 @@ def alert_handler_agent(alert: Dict[str, Any],access_key:str, temp_duration: int
     if not isinstance(alert, dict):
         return "Invalid alert payload (expected dict)."
 
-    user_id = _get_user_from_alert(alert)
+    user_id = alert.get("user")
     if not user_id:
         log.warning("No user identifier found in alert payload.")
         return "No user identifier found in alert."
 
-    confidence = _get_confidence(alert)
+    confidence = alert.get("confidence_score")
     log.info(f"Alert for user={user_id} confidence={confidence:.3f}")
 
     try:
-        if confidence >= 0.85:
+        if confidence >= 85:
             result = permanently_block_user(user_id, alert)
             action = "permanent_block"
-        elif confidence >= 0.6:
+        elif confidence >= 60:
             result = temporarily_block_user(user_id, duration=temp_duration, alert=alert)
             action = "temporary_block"
         else:
