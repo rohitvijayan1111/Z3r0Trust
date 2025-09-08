@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+const proxyUrl = import.meta.env.VITE_PROXY_URL;
 
 export function FundTransfer() {
   const [toAccount, setToAccount] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
+
+  const session_jwt = localStorage.getItem("session_jwt");
+  const authResponse = JSON.parse(localStorage.getItem("auth_response"));
+  const userEmail = authResponse?.user_id; // X-User-Email header
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,28 +19,38 @@ export function FundTransfer() {
       return;
     }
 
+    if (!session_jwt || !userEmail) {
+      setMessage("❌ You are not logged in.");
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:8000/api/transfer", {
+      const response = await fetch(`${proxyUrl}/api/transfer`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session_jwt}`,
+          "X-User-Email": userEmail,
+        },
         body: JSON.stringify({
-          from_account_number: "111722293", // 👈 get logged-in user's account number
+          from_account_number: "111722293", // 👈 ideally get from authResponse
           to_account_number: toAccount,
           amount: parseFloat(amount),
         }),
       });
 
       const result = await response.json();
+
       if (response.ok) {
         setMessage("✅ " + result.message);
       } else {
-        setMessage("❌ " + result.detail);
+        setMessage("❌ " + (result.detail || result.message || "Transfer failed"));
       }
     } catch (err) {
+      console.error(err);
       setMessage("❌ Backend unavailable.");
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-zinc-900 dark:to-black flex items-center justify-center p-6">

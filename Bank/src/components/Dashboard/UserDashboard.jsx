@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+const proxyUrl = import.meta.env.VITE_PROXY_URL;
 
 export function UserDashboard() {
   const [balance, setBalance] = useState(null);
@@ -26,7 +27,7 @@ export function UserDashboard() {
         }
 
         // ✅ Add X-User-Email header
-        const balanceRes = await fetch("http://localhost:8000/api/balance", {
+        const balanceRes = await fetch(`${proxyUrl}/api/balance`, {
           headers: {
             Authorization: `Bearer ${session_jwt}`,
             "X-User-Email": userEmail,
@@ -40,7 +41,7 @@ export function UserDashboard() {
         const balanceData = await balanceRes.json();
         setBalance(balanceData.balance);
 
-        const txRes = await fetch("http://localhost:8000/api/transactions", {
+        const txRes = await fetch(`${proxyUrl}/api/transactions`, {
           headers: {
             Authorization: `Bearer ${session_jwt}`,
             "X-User-Email": userEmail,
