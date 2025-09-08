@@ -221,9 +221,9 @@ import os
 import logging
 import threading
 from typing import Any, Dict, Optional
-
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+import requests
 
 load_dotenv()
 # Optional imports from your project (safe guarded)
@@ -247,7 +247,7 @@ DESCOPE_MANAGEMENT_KEY = os.getenv("DESCOPE_MANAGEMENT_KEY")
 descope_client = None
 if DescopeClient and DESCOPE_PROJECT_ID and DESCOPE_MANAGEMENT_KEY:
     try:
-        descope_client = DescopeClient(project_id=DESCOPE_PROJECT_ID)
+        descope_client =DescopeClient(project_id=DESCOPE_PROJECT_ID,management_key=DESCOPE_MANAGEMENT_KEY)
         log.info("Descope client initialized.")
     except Exception as e:
         log.error(f"Failed to init Descope client: {e}")
@@ -319,26 +319,36 @@ def permanently_block_user(user_id: str, alert: Optional[Dict[str, Any]] = None)
             log.warning(msg)
             return msg
 
-        descope_client.management.user.update_status(user_id, "disabled")
+        descope_client.mgmt.user.deactivate(user_id)
         msg = f"User {user_id} permanently blocked."
         log.info(msg)
 
         # Notify user
-        body = (
-            f"Dear {user_id},\n\n"
-            "We detected high-confidence suspicious activity and have permanently blocked your account.\n"
-            "If you believe this is a mistake, please appeal here: http://34.44.88.193/appeal\n\n"
-            "Regards,\nZeroTrust Security Team"
-        )
-        _notify_user(user_id, body)
+       
 
         # Optionally log to DB
-        if db_controller_agent:
-            try:
-                prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','permanent_block','{alert}')"
-                db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
-            except Exception:
-                log.exception("db_controller_agent failed to log permanent block.")
+        # if db_controller_agent:
+        try:
+            r_id=alert["id"]
+            prompt = f"set blockedUser column to 1 where the id is {r_id} in the alerts table "
+            db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
+        except Exception:
+            log.exception("db_controller_agent failed to log permanent block.")
+
+        # try:
+        #     new_id=alert.get("id")
+        #     prompt = f"add the entry to the table 'appeal'(id	int,subject	varchar(200), content	varchar(2000), status	tinyint(1),ref_id (int), created_at(timestamp)), here the subject null, content null, ref_id is {new_id}, created_at is default value"
+        #     db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
+        # except Exception:
+        #     log.exception("db_controller_agent failed to log temporary block.")
+        new_id=alert.get("id")
+        url = "http://localhost:5000/api/appeals/add/init"
+        data={"new_id":new_id}
+        response = requests.post(url, json=data)
+
+        body = f"send mail detially as Dear {user_id} We detected high-confidence suspicious activity and have permanently blocked your account.If you believe this is a mistake, please appeal here: http://localhost:2222/appeal\n\n , notify the user that he has to enter the appeal ref id {r_id} for further follow up Regards,\nZeroTrust Security Team"
+        
+        _notify_user(user_id, body)
 
         return msg
     except Exception as e:
@@ -347,7 +357,7 @@ def permanently_block_user(user_id: str, alert: Optional[Dict[str, Any]] = None)
 
 
 @mcp.tool()
-def temporarily_block_user(user_id: str, duration: int = 3600, alert: Optional[Dict[str, Any]] = None) -> str:
+def temporarily_block_user(user_id: str, duration: int = 300, alert: Optional[Dict[str, Any]] = None) -> str:
     """Temporarily block a user and schedule re-enable after `duration` seconds."""
     try:
         if not descope_client:
@@ -355,36 +365,43 @@ def temporarily_block_user(user_id: str, duration: int = 3600, alert: Optional[D
             log.warning(msg)
             return msg
 
-        descope_client.management.user.update_status(user_id, "disabled")
+        descope_client.mgmt.user.deactivate(user_id)
         msg = f"User {user_id} temporarily blocked for {duration} seconds."
         log.info(msg)
 
         # Schedule unblocking
-        def _unblock():
-            try:
-                descope_client.management.user.update_status(user_id, "enabled")
-                log.info(f"User {user_id} re-enabled after temporary block.")
-            except Exception:
-                log.exception(f"Failed to re-enable {user_id} after temporary block.")
+        # def _unblock():
+        #     try:
+        #         descope_client.mgmt.user.activate(user_id)
+        #         log.info(f"User {user_id} re-enabled after temporary block.")
+        #     except Exception:
+        #         log.exception(f"Failed to re-enable {user_id} after temporary block.")
 
-        t = threading.Timer(duration, _unblock)
-        t.daemon = True
-        t.start()
-
+        # t = threading.Timer(duration, _unblock)
+        # t.daemon = True
+        # t.start()
+        new_id=alert.get("id")
         # Notify
-        body = (
-            f"Dear {user_id},\n\n"
-            "We detected suspicious activity and temporarily blocked your account.\n"
-            f"It will be re-enabled automatically after {duration} seconds.\n"
-            "To appeal, visit: http://34.44.88.193/appeal\n\nRegards,\nZeroTrust Security Team"
-        )
+        body =   f"send mail detially as Dear {user_id} We detected high-confidence suspicious activity and have Temporarily blocked your account.If you believe this is a mistake, please appeal here: http://34.44.88.193/appeal\n\n , notify the user that he has to enter the appeal ref id {new_id} for further follow up Regards,\nZeroTrust Security Team"
         _notify_user(user_id, body)
 
         try:
-            db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','temporary_block','{alert}')",access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
-        except Exception:
-            log.exception("db_controller_agent failed to log temporary block.")
+            prompt = f"set blockedUser column to 1 where the id is {new_id} in the alerts table "
+            db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
 
+        except Exception:
+            log.exception("db_controller_agent failed to log permanent block.")
+            
+        # try:
+        #     new_id=alert.get("new_id")
+        #     prompt = f"add the entry to the table 'appeal'(id int autoincrement,subject	varchar(200), content	varchar(2000), status	tinyint(1),ref_id (int), created_at(timestamp) Default CURRENT_TIMESTAMP), here the subject null, content null, ref_id is {new_id}"
+        #     db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
+        # except Exception:
+        #     log.exception("db_controller_agent failed to log temporary block.")
+        url = "http://localhost:5000/api/appeals/add/init"
+        data={"new_id":alert.get("id")}
+        response = requests.post(url, json=data)
+        
         return msg
     except Exception as e:
         log.exception("Error in temporarily_block_user")
@@ -395,15 +412,11 @@ def log_alert_only(user_id: str, alert: Optional[Dict[str, Any]] = None) -> str:
     """Log the alert in DB or logs and optionally force logout/enforce MFA (non-blocking)."""
     try:
         log_msg = f"Logged alert for {user_id}: {alert}"
-        log.info(log_msg)
+        # log.info(log_msg)
+        logout_account(user_id)
 
         # Optionally persist to DB
         
-        try:
-            db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','log_only','{alert}')",access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
-        except Exception:
-            log.exception("db_controller_agent failed to log alert-only event.")
-
         # Optionally notify the user that we logged and enforced additional checks
         _notify_user(user_id, f"Dear {user_id}, suspicious activity was observed and logged for review. If you did not perform this activity, please appeal: http://34.44.88.193/appeal")
 
@@ -420,7 +433,7 @@ def remove_block(user_id: str) -> str:
             msg = "Descope not configured — cannot remove block."
             log.warning(msg)
             return msg
-        descope_client.management.user.update_status(user_id, "enabled")
+        descope_client.mgmt.user.activate(user_id)
         log.info(f"Removed block for user {user_id}")
         _notify_user(user_id, "Your account has been re-enabled by the security team.")
         return f"Block removed for {user_id}"
@@ -441,14 +454,14 @@ def forward_to_soc(alert: Dict[str, Any]) -> str:
         return f"Failed to forward to SOC: {e}"
 
 @mcp.tool()
-def logout_account(session_token: str, user_id: Optional[str] = None, alert: Optional[Dict[str, Any]] = None) -> str:
+def logout_account (user_id: Optional[str] = None, alert: Optional[Dict[str, Any]] = None) -> str:
     """Invalidate a session token (logout)."""
     try:
         if not descope_client:
             msg = "Descope not configured — cannot logout the session."
             log.warning(msg)
             return msg
-        descope_client.logout(session_token)
+        descope_client.mgmt.user.logout_user(user_id)
         if user_id:
             _notify_user(user_id, "You have been logged out due to suspicious activity. Please reauthenticate and enable MFA.")
         return "Session invalidated"
@@ -475,14 +488,14 @@ def alert_handler_agent(alert: Dict[str, Any],access_key:str, temp_duration: int
         log.warning("No user identifier found in alert payload.")
         return "No user identifier found in alert."
 
-    confidence = alert.get("confidence_score")
+    confidence = int(alert.get("confidence_score"))
     log.info(f"Alert for user={user_id} confidence={confidence:.3f}")
 
     try:
-        if confidence >= 85:
+        if confidence >= 80:
             result = permanently_block_user(user_id, alert)
             action = "permanent_block"
-        elif confidence >= 60:
+        elif confidence >= 50:
             result = temporarily_block_user(user_id, duration=temp_duration, alert=alert)
             action = "temporary_block"
         else:

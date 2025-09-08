@@ -11,6 +11,7 @@ from descope import DescopeClient
 import asyncio
 import nest_asyncio
 import requests
+from appeal_handler_agent import appeal_handler_agent
 from db_controller_agent import db_controller_agent
 from app_helper_functions import apply_policy
 from cache import  cache_cleaner, is_duplicate
@@ -70,7 +71,6 @@ def list_tools():
     # return asyncio.run(run())
     return {"tools":tools_list()}
 
-
 # --------- Send email via MCP tool ---------
 
 @app.route("/send-email", methods=["POST"])
@@ -104,18 +104,17 @@ def get_appeal():
 @app.route("/appealrequest", methods=["POST"])
 def handle_appeal():
     emailid  = request.form.get("email")
-    subject1 = request.form.get("subject1")
-    content1 = request.form.get("content1")
-    
-    print("Appeals received:")
-    print(f"1: {subject1} - {content1}")
+    subject = request.form.get("subject")
+    content = request.form.get("content")
+    ref_id= request.form.get("ref_id")
 
-    prompt = f"add the entry to the table 'appeal'(id	int,subject	varchar(200), content	varchar(2000), status	tinyint(1)), here the subject {subject1}, content {content1}, status 1"
+    print("Appeals received:")
+    print(f"1: {subject} - {content}")
+
+    prompt = f"set the values of subject {subject}, content {content} on appeal table(id	int,subject	varchar(200), content	varchar(2000), status	tinyint(1),ref_id (int), created_at (timestamp)),   where the ref_id is {ref_id}, ensure you did not duplicate the entry"
     db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
 
-    prompt = f"mail to {emailid} as appeal recieved successfully, forwarded to our AI agent and SOC, will get back to you within two working days, thank you, ZeroTrust team"
-    mail_sender_agent(emailid,prompt,os.getenv("EMAIL_SENDER_AGENT_ACCESS_KEY"))
-
+    appeal_handler_agent({"emailid":emailid,"subject":subject,"content":content,"ref_id":ref_id},os.getenv("APPEAL_HANDLER_AGENT_ACCESS_KEY"))
     # Returning JS alert to close window
     return Response("""
         <html>
@@ -167,8 +166,9 @@ def webhook():
         url = "http://localhost:5000/api/alerts/fetch"
 
         response = requests.post(url, json=alerts)
+        new_id=response.json().get("new_id")
 
-        print(response)
+        print(response.json())
         # return {"res": str(response)}
         prompt = (
             f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alerts} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
@@ -177,6 +177,8 @@ def webhook():
         mail_sender_agent(alerts.get("user"),prompt,os.getenv("EMAIL_SENDER_AGENT_ACCESS_KEY"))
         print(f"✅ Processed alert: {alert_name} for {alerts.get('user')}")
         print("\nreached alert agent\n")
+        alerts["id"]=new_id;
+        print(alerts.get("id"))
         alert_handler_agent(alert=alerts,access_key=os.getenv("ALERT_HANDLER_AGENT_ACCESS_KEY"))
         return {"result":"success"}
         # return {
@@ -195,7 +197,6 @@ def webhook():
 # @app.before_first_request
 # def start_background_tasks():
 #     asyncio.create_task(cache_cleaner())
-
 
 
 if __name__ == "__main__":

@@ -30,12 +30,35 @@ def fetch_and_store_alerts():
         print(data)
         res=Alert.insert_alert(data)
         if(res.get('status')):
-            return jsonify({"message": "Alerts stored successfully"}), 200
+            return jsonify({"message": "Alerts stored successfully","new_id":res.get("inserted_id")}), 200
         else:
             return jsonify({'e':str(res.get('e'))}),500
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@responses_bp.route("/alerts/fetchbyid", methods=["POST"])
+def fetch():
+    """
+    Fetch a specific alert by its auto-increment ID.
+    Input: { "id": <int> }
+    Returns: alert row as JSON (key-value pairs).
+    """
+    try:
+        req_data = request.get_json()
+        alert_id = req_data.get("id")
+        if not alert_id:
+            return jsonify({"error": "Missing 'id' in request"}), 400
+
+        res = Alert.fetch_alert(alert_id)
+        if res:
+            return jsonify({"alert": res}), 200
+        else:
+            return jsonify({"error": f"No alert found with id={alert_id}"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Block a response and its associated alert
 @responses_bp.route("/responses/<int:response_id>/block", methods=["PUT"])
