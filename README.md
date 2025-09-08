@@ -75,6 +75,8 @@ Z3r0Trust introduces a *coordinated system of specialized agents*, each with a c
 * ✅ Delegation demonstrated when one agent acts on behalf of another (e.g., Responder → Mail Agent).
 * ✅ Descope Flows applied for user-facing consent (e.g., MFA, appeal approvals).
 
+---
+
 ### With & Without Z3r0Trust
 
 ![WhatsApp Image 2025-09-08 at 18 28 56_9c27b80c](https://github.com/user-attachments/assets/e0a441fb-fe6c-450c-b1e4-c240b50652fb)
@@ -240,8 +242,8 @@ Z3r0Trust is a **multi-agent security system** powered by **Descope** and **Splu
 ---
 
 ## 🎥 PPT Link
-
 📺 https://registan-fergana.my.canva.site/z3r0-trust
+
 ---
 
 ## 🔮 Future Advancements (What We’d Do With More Time)
