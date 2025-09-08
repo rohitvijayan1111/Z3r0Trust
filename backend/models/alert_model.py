@@ -2,6 +2,33 @@ from db import get_db_connection
 from datetime import datetime
 
 class Alert:
+
+    class Alert:
+        @staticmethod
+        def fetch_alert(alert_id: int) -> dict:
+            """
+            Fetch alert entry by auto-increment ID.
+            Returns dictionary of alert details or None if not found.
+            """
+            conn = get_db_connection()
+            if not conn:
+                return None
+
+            try:
+                cursor = conn.cursor(dictionary=True)  # returns dict instead of tuple
+                query = "SELECT * FROM alerts WHERE id = %s"
+                cursor.execute(query, (alert_id,))
+                row = cursor.fetchone()
+
+                return row if row else None
+
+            except Exception as e:
+                print("Error fetching alert:", e)
+                return None
+            finally:
+                cursor.close()
+                conn.close()
+
     @staticmethod
     def insert_alert(alert_data):
         conn = get_db_connection()

@@ -15,11 +15,12 @@ from datetime import datetime
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
-    allow_credentials=True,
+    allow_origins=["*"],   # allow all origins
+    allow_credentials=False,  # must be False with "*"
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
+
 
 # Descope Setup
 DESCOPE_PROJECT_ID = "P32Dj1SFaOxhwz4v0i9D6jseEJny"
@@ -114,6 +115,10 @@ class FundTransferRequest(BaseModel):
 # ----------------------------
 # API Routes
 # ----------------------------
+
+@app.get("/")
+def health():
+    return "hello"
 @app.post("/api/auth/login")
 async def login_with_email(payload: LoginPayload, request: Request):
     try:

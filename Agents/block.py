@@ -67,6 +67,6 @@ def block(userid: str):
         return f"❌ Failed to block user {userid}: {str(e)}"
 
 # Example usage
-# print(signup("kavi22022.ad@rmkec.ac.in"))
+print(signup("abc.it@rmkec.ac.in"))
 # print(login("kavi22022.ad@rmkec.ac.in"))
-print(block("kavi22022.ad@rmkec.ac.in"))
+# print(block("kavi22022.ad@rmkec.ac.in"))

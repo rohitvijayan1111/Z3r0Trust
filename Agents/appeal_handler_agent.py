@@ -2,20 +2,18 @@ import os
 import logging
 import threading
 from typing import Any, Dict, Optional
-
+from groq import Groq
+from phi.agent import Agent
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+import requests
 
 load_dotenv()
 # Optional imports from your project (safe guarded)
 
 from mail_sender_agent import mail_sender_agent
-
-
 from db_controller_agent import db_controller_agent
-
 from descope import DescopeClient
-
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
@@ -37,7 +35,7 @@ else:
     log.warning("Descope client not configured (DESCOPE_PROJECT_ID or DESCOPE_MANAGEMENT_KEY missing).")
 
 # ------------------ MCP server ------------------
-mcp = FastMCP("AlertHandler")
+mcp = FastMCP("AppealHandler")
 
 # ------------------ Helpers ------------------
 def _notify_user(user_id: str, message: str) -> None:
@@ -59,138 +57,8 @@ def _notify_user(user_id: str, message: str) -> None:
     except Exception as e:
         log.exception(f"Failed to notify {user_id}: {e}")
 
-
-def _get_user_from_alert(alert: Dict[str, Any]) -> Optional[str]:
-    """Try multiple keys to extract a user identifier from the alert payload."""
-    for key in ("user", "user_id", "userid", "email", "email_id", "account"):
-        if alert.get(key):
-            return str(alert.get(key))
-    return None
-
-
-def _get_confidence(alert: Dict[str, Any]) -> float:
-    """
-    Extract a confidence score from the alert. Accepts many key names.
-    Normalizes percentages (>1) to 0..1 range if needed.
-    Returns 0.0 if none found or parse fails.
-    """
-    for key in ( "confidence_score"):
-        val = alert.get(key)
-        if val is None:
-            continue
-        try:
-            conf = float(val)
-            # normalize if expressed as percentage (0..100)
-            if conf > 1.0:
-                conf = conf / 100.0
-            # clamp
-            return max(0.0, min(1.0, conf))
-        except Exception:
-            continue
-    return 0.0
-
-# ------------------ Tools (registered with MCP) ------------------
-
 @mcp.tool()
-def permanently_block_user(user_id: str, alert: Optional[Dict[str, Any]] = None) -> str:
-    """Permanently block a user (Descope) and notify them."""
-    try:
-        if not descope_client:
-            msg = "Descope not configured — cannot permanently block."
-            log.warning(msg)
-            return msg
-
-        descope_client.mgmt.user.deactivate(user_id)
-        msg = f"User {user_id} permanently blocked."
-        log.info(msg)
-
-        # Notify user
-        body = (
-            f"Dear {user_id},\n\n"
-            "We detected high-confidence suspicious activity and have permanently blocked your account.\n"
-            "If you believe this is a mistake, please appeal here: http://34.44.88.193/appeal\n\n"
-            "Regards,\nZeroTrust Security Team"
-        )
-        _notify_user(user_id, body)
-
-        # Optionally log to DB
-        # if db_controller_agent:
-        #     try:
-        #         prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','permanent_block','{alert}')"
-        #         db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
-        #     except Exception:
-        #         log.exception("db_controller_agent failed to log permanent block.")
-
-        return msg
-    except Exception as e:
-        log.exception("Error in permanently_block_user")
-        return f"Failed to permanently block {user_id}: {e}"
-
-
-@mcp.tool()
-def temporarily_block_user(user_id: str, duration: int = 300, alert: Optional[Dict[str, Any]] = None) -> str:
-    """Temporarily block a user and schedule re-enable after `duration` seconds."""
-    try:
-        if not descope_client:
-            msg = "Descope not configured — cannot temporarily block."
-            log.warning(msg)
-            return msg
-
-        descope_client.mgmt.user.deactivate(user_id)
-        msg = f"User {user_id} temporarily blocked for {duration} seconds."
-        log.info(msg)
-
-        # Schedule unblocking
-        def _unblock():
-            try:
-                descope_client.mgmt.user.activate(user_id)
-                log.info(f"User {user_id} re-enabled after temporary block.")
-            except Exception:
-                log.exception(f"Failed to re-enable {user_id} after temporary block.")
-
-        t = threading.Timer(duration, _unblock)
-        t.daemon = True
-        t.start()
-
-        # Notify
-        body = (
-            f"Dear {user_id},\n\n"
-            "We detected suspicious activity and temporarily blocked your account.\n"
-            f"It will be re-enabled automatically after {duration} seconds.\n"
-            "To appeal, visit: http://34.44.88.193/appeal\n\nRegards,\nZeroTrust Security Team"
-        )
-        _notify_user(user_id, body)
-
-        # try:
-        #     db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','temporary_block','{alert}')",access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
-        # except Exception:
-        #     log.exception("db_controller_agent failed to log temporary block.")
-
-        return msg
-    except Exception as e:
-        log.exception("Error in temporarily_block_user")
-        return f"Failed to temporarily block {user_id}: {e}"
-
-@mcp.tool()
-def log_alert_only(user_id: str, alert: Optional[Dict[str, Any]] = None) -> str:
-    """Log the alert in DB or logs and optionally force logout/enforce MFA (non-blocking)."""
-    try:
-        log_msg = f"Logged alert for {user_id}: {alert}"
-        # log.info(log_msg)
-        logout_account(user_id)
-
-        # Optionally persist to DB
-        
-        # Optionally notify the user that we logged and enforced additional checks
-        _notify_user(user_id, f"Dear {user_id}, suspicious activity was observed and logged for review. If you did not perform this activity, please appeal: http://34.44.88.193/appeal")
-
-        return f"Alert logged for {user_id}"
-    except Exception as e:
-        log.exception("Error in log_alert_only")
-        return f"Failed to log alert for {user_id}: {e}"
-
-@mcp.tool()
-def remove_block(user_id: str) -> str:
+def remove_block(user_id: str,ref_id) -> str:
     """Remove a block (enable user)."""
     try:
         if not descope_client:
@@ -199,76 +67,92 @@ def remove_block(user_id: str) -> str:
             return msg
         descope_client.mgmt.user.activate(user_id)
         log.info(f"Removed block for user {user_id}")
-        _notify_user(user_id, "Your account has been re-enabled by the security team.")
+        prompt = f"set blockedUser column to 0 where the id is {ref_id} in the alerts table "
+        db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
+        _notify_user(user_id, "Your account has been re-enabled by the security team. mail detailly")
+
+        prompt = f"set status column to 0 where the ref_id is {ref_id} in the appeal table "
+        db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
+
         return f"Block removed for {user_id}"
     except Exception as e:
         log.exception("Error in remove_block")
         return f"Failed to remove block for {user_id}: {e}"
 
 @mcp.tool()
-def forward_to_soc(alert: Dict[str, Any]) -> str:
+def forward_to_soc(user_id: Dict[str, Any]) -> str:
     """Forward alert to SOC — placeholder to push to queue or ticketing system."""
     try:
         # Replace with your SOC integration
         log.info(f"Forwarding to SOC: {alert}")
+        prompt = f"mail to {user_id} as appeal recieved successfully, forwarded to our SOC, will get back to you within two working days, thank you, ZeroTrust team"
+        mail_sender_agent(user_id,prompt,os.getenv("EMAIL_SENDER_AGENT_ACCESS_KEY"))
+
         # db_controller_agent or queue push could happen here
         return "Forwarded to SOC"
     except Exception as e:
         log.exception("Error in forward_to_soc")
         return f"Failed to forward to SOC: {e}"
 
-@mcp.tool()
-def logout_account (user_id: Optional[str] = None, alert: Optional[Dict[str, Any]] = None) -> str:
-    """Invalidate a session token (logout)."""
-    try:
-        if not descope_client:
-            msg = "Descope not configured — cannot logout the session."
-            log.warning(msg)
-            return msg
-        descope_client.mgmt.user.logout_user(user_id)
-        if user_id:
-            _notify_user(user_id, "You have been logged out due to suspicious activity. Please reauthenticate and enable MFA.")
-        return "Session invalidated"
-    except Exception as e:
-        log.exception("Error in logout_account")
-        return f"Failed to logout session: {e}"
 
 # ------------------ Decision function (callable directly) ------------------
 
-def alert_handler_agent(alert: Dict[str, Any],access_key:str, temp_duration: int = 3600) -> str:
+def appeal_handler_agent(appeal: Dict[str, Any],access_key:str):
     """
-    Decide action based on confidence score in `alert` and call the proper tool.
+    Decide action based on  `alert`, subject, content of the appeal then take decision.
     Returns a summary string.
     """
     token = descope_client.exchange_access_key(access_key=access_key).get('sessionToken', {}).get('jwt')
     if not token:
         return "Access Key Not Valid"
     
-    if not isinstance(alert, dict):
+    if not isinstance(appeal, dict):
         return "Invalid alert payload (expected dict)."
 
-    user_id = alert.get("user")
-    if not user_id:
-        log.warning("No user identifier found in alert payload.")
-        return "No user identifier found in alert."
-
-    confidence = int(alert.get("confidence_score"))
-    log.info(f"Alert for user={user_id} confidence={confidence:.3f}")
-
+    user_id=appeal.get("email")
+    ref_id=appeal.get('ref_id')
+    path=os.getenv('IP_AND_PORT_2')
+    url = f"{path}/api/alerts/fetchbyid"
+    alert = requests.post(url, json={"id":ref_id})
     try:
-        if confidence >= 85:
-            result = permanently_block_user(user_id, alert)
-            action = "permanent_block"
-        elif confidence >= 60:
-            result = temporarily_block_user(user_id, duration=temp_duration, alert=alert)
-            action = "temporary_block"
-        else:
-            result = log_alert_only(user_id, alert)
-            action = "log_only"
+        if not user_id or not ref_id:
+            log.warning("No user identifier found in alert payload.")
+            return "No sufficient data found in alert ."
+        agent = Agent(
+            name="Appeal handler",
+            role="Analyse the given appeal and alert data and decide what action to take using available tools",
+            model=Groq(id=os.getenv(), api_key=os.getenv()),
+            tools=[remove_block,forward_to_soc],
+            messages=[
+                {"role": "system", "content": "alert_data={alert}, appeal_data={appeal}"}
+            ],
+            memory={
+                "alert": alert,
+                "appeal": appeal,
+                "user_id":user_id,
+                "ref_id":ref_id
+            },
+            markdown=True,
+        )    
+        
+        print("alert from appeal handler agent")
+        print(alert)
+        # prompt=f"{alert}, {appeal} if the volnurability of the alert is less, appeal is reasonable enough to remove the block call remove block, if it is not certain forward to soc"
+        # agent.print_response(prompt)
 
-        summary = f"Decision: {action}; confidence={confidence:.3f}; result={result}"
-        log.info(summary)
-        return summary
+        result = agent.run(
+            f"""
+            Appeal data:
+            {appeal_dict}
+
+            Alert data:
+            {alert_dict}
+
+            Decide whether to remove block or forward to SOC.
+            """
+        )
+        print(result)
+
     except Exception as e:
         log.exception("Error in alert_handler_agent")
         return f"Handler error: {e}"
