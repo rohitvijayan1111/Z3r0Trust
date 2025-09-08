@@ -86,7 +86,7 @@ class Alert:
             return []
         try:
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM alerts ORDER BY timestamp DESC")
+            cursor.execute("SELECT * FROM alerts")
             result = cursor.fetchall()
             return result
         except Exception as e:
@@ -95,3 +95,5 @@ class Alert:
         finally:
             cursor.close()
             conn.close()
+
+    

@@ -46,7 +46,6 @@ class Appeal:
         conn = get_db_connection()
         if not conn:
             return []
-
         try:
             cursor = conn.cursor(dictionary=True)
             query = """
@@ -55,16 +54,17 @@ class Appeal:
                     a.subject AS appeal_subject,
                     a.content AS appeal_content,
                     a.status AS appeal_status,
-                    r.id AS response_id,
-                    r.alert_name AS response_alert_name,
-                    r.confidence_score AS response_confidence_score,
-                    r.status AS response_status,              -- ✅ include response status
-                    r.alert_id AS alert_id,
-                    al.alert_name AS alert_name,
-                    al.confidence_score AS alert_confidence_score
+                    al.id AS alert_id,
+                    al.alert_name,
+                    al.confidence_score,
+                    al.user,
+                    al.ip,
+                    al.device,
+                    al.status AS alert_status,
+                    al.blockedIP,
+                    al.blockedUser
                 FROM appeal a
-                LEFT JOIN responses r ON a.response_id = r.id
-                LEFT JOIN alerts al ON r.alert_id = al.id
+                LEFT JOIN alerts al ON a.ref_id = al.id
                 WHERE a.status = 1
                 ORDER BY a.id DESC
             """
@@ -77,18 +77,18 @@ class Appeal:
                     "id": row["appeal_id"],
                     "subject": row["appeal_subject"],
                     "content": row["appeal_content"],
-                    "status": row["appeal_status"],     # appeal status
-                    "response": {
-                        "id": row["response_id"],
-                        "alert_name": row["response_alert_name"],
-                        "confidence_score": row["response_confidence_score"],
-                        "status": row["response_status"],   # ✅ pass response status to frontend
-                        "alert": {
-                            "id": row["alert_id"],
-                            "alert_name": row["alert_name"] or "N/A",
-                            "confidence_score": row["alert_confidence_score"] or "N/A"
-                        } if row["alert_id"] else None
-                    } if row["response_id"] else None
+                    "status": row["appeal_status"],
+                    "alert": {
+                        "id": row["alert_id"],
+                        "alert_name": row["alert_name"],
+                        "confidence_score": row["confidence_score"],
+                        "user": row["user"],
+                        "ip": row["ip"],
+                        "device": row["device"],
+                        "status": row["alert_status"],
+                        "blockedIP": row["blockedIP"],
+                        "blockedUser": row["blockedUser"],
+                    } if row["alert_id"] else None
                 })
             return appeals
         except Exception as e:

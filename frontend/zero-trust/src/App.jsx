@@ -10,6 +10,7 @@ import { SignupFormDemo1 } from "./components/Signup and Login/SignupFormDemo";
 import { FeaturesSectionDemo } from "./components/Attack/FeaturesSectionDemo";
 import { AppealPage } from "./components/Dashboard/AppealPage";
 import { IntegrationSidebar } from "./components/third-party/IntegrationSidebar";
+import { TeamSection } from "./components/Developers_Profile/TeamSection";
 
 function App() {
   return (
@@ -19,11 +20,11 @@ function App() {
         <Route path="/userAuth" element={<SignupFormDemo />} />
         <Route path="/dashboard" element={<EvervaultCardDemo />} />
         <Route path="/alerts" element={<AlertsPage />} />
-        <Route path="/responses" element={<ResponsesPage />} />
         <Route path="/auth" element={<SignupFormDemo1 />} />
         <Route path="/beginAttack" element={<FeaturesSectionDemo />} />
         <Route path="/appeal" element={<AppealPage />} />
         <Route path="/integrateApi" element={<IntegrationSidebar />} />
+        <Route path="/team" element={<TeamSection />} />
       </Routes>
     </>
   );

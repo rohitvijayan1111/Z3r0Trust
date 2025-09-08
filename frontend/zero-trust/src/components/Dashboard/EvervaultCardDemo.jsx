@@ -20,12 +20,6 @@ export function EvervaultCardDemo() {
           route="/alerts"
         />
         <CardWrapper
-          title="Responses"
-          description="Easily manage and respond to notifications with one click."
-          buttonText="Get Responses"
-          route="/responses"
-        />
-        <CardWrapper
           title="Appeal"
           description="Submit or track appeals for any alerts or responses easily."
           buttonText="Go to Appeal"

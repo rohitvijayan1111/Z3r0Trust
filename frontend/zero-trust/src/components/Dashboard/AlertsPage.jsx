@@ -22,13 +22,7 @@ export function AlertsPage() {
 
   const handleToggleBlockIP = async (alert) => {
     try {
-      if (alert.blockedIP) {
-        // Call undo endpoint
-        await axios.put(`${API_BASE}/responses/${alert.response_id}/undo`);
-      } else {
-        // Call block endpoint
-        await axios.put(`${API_BASE}/responses/${alert.response_id}/block`);
-      }
+      await axios.put(`${API_BASE}/responses/${alert.id}/block_ip`);
       fetchAlerts();
     } catch (err) {
       console.error("Error toggling block IP:", err);
@@ -37,13 +31,7 @@ export function AlertsPage() {
 
   const handleToggleBlockUser = async (alert) => {
     try {
-      if (alert.blockedUser) {
-        // Call undo endpoint
-        await axios.put(`${API_BASE}/responses/${alert.response_id}/undo`);
-      } else {
-        // Call block endpoint
-        await axios.put(`${API_BASE}/responses/${alert.response_id}/block`);
-      }
+      await axios.put(`${API_BASE}/responses/${alert.id}/block_user`);
       fetchAlerts();
     } catch (err) {
       console.error("Error toggling block User:", err);
