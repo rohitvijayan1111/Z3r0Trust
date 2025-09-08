@@ -9,12 +9,12 @@ import {
   IconUserCheck,
 } from "@tabler/icons-react";
 import { useState } from "react";
-
+const backendUrl = import.meta.env.BACKEND;
 export function FeaturesSectionDemo() {
   const [loading, setLoading] = useState(null);
   const [response, setResponse] = useState(null);
 
-  const API_BASE = "http://127.0.0.1:5000/api/payloads";
+  const API_BASE = `${backendUrl}/api/payloads`;
 
   const agents = [
     {

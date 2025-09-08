@@ -3,6 +3,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "../../lib/utils";
 import { motion } from "framer-motion";
+const backendUrl = import.meta.env.BACKEND;
 
 export function SignupFormDemo1() {
   const [email, setEmail] = useState("");
@@ -14,7 +15,7 @@ export function SignupFormDemo1() {
     console.log("Login submitted");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${backendUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, request_type: "web" }),

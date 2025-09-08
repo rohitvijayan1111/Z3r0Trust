@@ -1,8 +1,10 @@
 # 🔐 Z3r0Trust – Autonomous Security, Human Trust
 
-Z3r0Trust is an **autonomous multi-agent security framework powered by Descope** to safeguard enterprise systems against modern cyber threats. It continuously detects, analyzes, responds, and manages suspicious activities — while ensuring transparency, fairness, and SOC oversight.
+Z3r0Trust is an autonomous multi-agent security framework powered by Descope to safeguard enterprise systems against modern cyber threats. It continuously authenticates, detects, analyzes, responds, and manages suspicious activities — while ensuring transparency, fairness and SOC oversight.
 
-Unlike traditional SIEMs that only record events, Z3r0Trust combines **Descope-based authentication and delegation, real-time log intelligence, autonomous response, AI-driven summaries, and human appeal workflows** to create a resilient defense ecosystem.
+Unlike traditional SIEMs that only record events, Z3r0Trust combines Descope-based authentication & delegation, real-time log intelligence, autonomous response and human appeal workflows to create a resilient defense ecosystem.
+
+Descope acts as a middleware security layer for third-party applications, protecting them from brute force, credential stuffing, suspicious API usage, and more. Any third-party application integrating with Z3r0Trust creates a proxy URL that routes backend traffic through Z3r0Trust middleware. This ensures logs are captured, anomalies are detected, and malicious actors are blocked automatically.
 
 ---
 
@@ -11,14 +13,16 @@ Unlike traditional SIEMs that only record events, Z3r0Trust combines **Descope-b
 **Project Name:** Z3r0Trust – Autonomous Security, Human Trust
 **Short Description:** An AI-driven, multi-agent framework leveraging **Descope OAuth** for secure inter-agent communication, autonomous detection/response, and fair user management.
 
-**Team Name:** United Visionaries
-**Team Members:** Sample placeholders (replace with actual names)
+## 👥 Team – Sentinel 5
+We are **Sentinel 5**, a passionate team of developers and security innovators dedicated to building resilient, human-centric cyber defense systems. Our expertise spans **full-stack development, cybersecurity, machine learning, DevOps, cloud computing, and UI/UX design**, enabling us to deliver scalable end-to-end solutions.
 
-* Team 1: Member A, Member B
-* Team 2: Member C, Member D
-* Team 3: Member E, Member F
-* Team 4: Member G, Member H
-* Team 5: Member I, Member J
+**Team Members:** 
+
+* [Rohit Vijayan B](https://www.linkedin.com/in/rohitvijayan1111/)
+* [Divakar G](https://www.linkedin.com/in/divakar3501/)
+* [Rithik Raja S](https://www.linkedin.com/in/rithik-raja-s/)
+* [Gokul J](https://www.linkedin.com/in/gokul-jeyachandran-37a649229/)
+* [Kaviyarasu S](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)
 
 ---
 
@@ -41,22 +45,27 @@ Unlike traditional SIEMs that only record events, Z3r0Trust combines **Descope-b
 
 ## 📌 Problem
 
-Enterprises still face persistent challenges:
+Enterprises face persistent challenges:
 
-* **Credential theft and phishing** remain top attack vectors.
-* **SOC teams are overwhelmed** by repetitive or noisy alerts.
-* **Response times lag** because incidents require manual triage.
-* **Legitimate users are unfairly blocked**, often without recourse.
+* *Credential theft and phishing* are leading attack vectors.
+* *SOC teams are overwhelmed* by noisy or repetitive alerts.
+* *Slow response times* due to manual triage.
+* *Legitimate users often get blocked* unfairly without recourse.
 
-⚠️ Logs alone are not enough.
-
-Z3r0Trust transforms raw events into **actionable security outcomes** with **autonomous containment, Descope-driven trust validation, and fair user handling**.
+**Logs alone are not enough.**
+Z3r0Trust transforms raw events into *actionable security outcomes* with *autonomous containment and fair user handling*.
 
 ---
 
 ## 🏗 Solution
 
-Z3r0Trust introduces a **coordinated system of specialized agents**, each with a clear responsibility. They communicate securely using **Descope OAuth tokens** to enforce trust boundaries, validate user sessions, and delegate actions across the system.
+Z3r0Trust introduces a *coordinated system of specialized agents*, each with a clear responsibility. All inter-agent communication is secured via **Descope OAuth tokens** with scoped access, ensuring strict trust boundaries.
+
+**Third-party integration flow:**
+
+* The 3rd-party app integrates with Z3r0Trust by creating a **proxy URL** inside Z3r0Trust.
+* All traffic flows through this middleware, where **Descope** authenticates and validates user attributes.
+* Logs are captured, anomalies detected, and malicious users are automatically blocked while legitimate access continues.
 
 ### Guidelines Alignment
 
@@ -66,17 +75,21 @@ Z3r0Trust introduces a **coordinated system of specialized agents**, each with a
 * ✅ Delegation demonstrated when one agent acts on behalf of another (e.g., Responder → Mail Agent).
 * ✅ Descope Flows applied for user-facing consent (e.g., MFA, appeal approvals).
 
+---
+
+### With & Without Z3r0Trust
+
 ![WhatsApp Image 2025-09-08 at 18 28 56_9c27b80c](https://github.com/user-attachments/assets/e0a441fb-fe6c-450c-b1e4-c240b50652fb)
 
 ### Key Features
 
-* 🔑 **Authentication & validation via Descope OAuth**
+* 🔑 Authentication & validation via **Descope OAuth**
 * 📡 **Splunk real-time analytics** with anomaly detection
-* 🤖 **AI-powered log summarization** for SOC teams
+* 🤖 **AI-powered log summarization** for SOC teams (less noise, faster context)
 * ⚡ Automated response: block, suspend, or monitor
 * 📬 Tiered email notifications: concise for users, forensic for SOC
 * 🧑‍💼 Human oversight through a **SOC dashboard**
-* 📝 Transparent appeal system for fair reinstatements
+* 📝 Transparent appeal system for reinstatements
 * 📜 Immutable audit trails for compliance
 
 ---
@@ -104,18 +117,62 @@ flowchart LR
 
 ## 🤖 Agents
 
-| Agent                 | Role                                                                                                     |
-| --------------------- | -------------------------------------------------------------------------------------------------------- |
-| **Detector**          | Authenticates with Descope, fetches user attributes (geo, IP, device), forwards enriched logs to Splunk. |
-| **Analyser**          | Splunk correlation, risk scoring, AI summarization of logs.                                              |
-| **Responder**         | Validates alerts, updates DB, applies enforcement actions.                                               |
-| **Mail MCP Agent**    | Sends structured alerts: user-friendly emails + SOC forensic reports                                     |
-| **SOC Analyst Layer** | Dashboard for reviewing medium/low-confidence alerts.                                                    |
-| **Appeal Agent**      | Manages user appeals, cross-checks evidence, reinstates if justified.                                    |
+### 🔍 Detector Agent
+
+* Authenticates with **Descope**.
+* Retrieves user attributes (IP, device, geo, MFA status).
+* Validates logins and flags anomalies.
+* Forwards enriched logs to **Splunk**.
+
+### 📊 Analyser Agent
+
+* Receives logs from Detector Agent.
+* Sends data to **Splunk** for real-time processing.
+* Splunk processes in 3 tiers:
+  * **High Frequency (5 mins):** Brute force, credential stuffing, suspicious API usage, bot/malware.
+  * **Medium Frequency (30 mins):** Impossible travel, account takeover, privilege escalation.
+  * **Low Frequency (5 hrs):** Data exfiltration, insider abuse, network anomalies.
+* Maintains **MD5 hash cache** (alert\_name.username.ip.device) to prevent duplicate alerts.
+* Forwards validated anomalies to Responder Agent.
+* 
+
+### 📧 Mail Sender Agent
+
+* Handles outbound email notifications.
+* Pre-configured with secure sender ID and app passkey.
+* Use cases:
+  * Alert user of suspicious activity.
+  * Notify SOC with forensic details.
+  * Confirm appeal submission.
+  * Notify user of account reinstatement.
+
+### 🚨 Alert Handler Agent
+
+* Processes alert data.
+* Decides on appropriate action:
+  * Temporary/Permanent block
+  * User logout or session invalidation
+  * Enforce MFA
+* Coordinates with Mail Sender (to notify) and Database Controller (to log alerts).
+* Creates **appeal tickets** in DB.
+
+### 🗄 Database Controller Agent
+
+* Securely interfaces with the database under scoped privileges.
+* Only executes *traceable and recoverable* operations.
+* Acts as a delegate to SOC for safe query execution.
+
+### 📝 Appeal Handler Agent
+
+* Activated when a user submits an appeal.
+* Reviews alert data + user message.
+* If low risk, reinstates account autonomously.
+* If uncertain, escalates to **SOC Analyst**.
+* Updates DB and notifies user via Mail Sender.
 
 ---
 
-## 📂 Work Flow
+## 📂 Example Work Flow (Scenario Based)
 
 **Scenario:** Multiple failed logins → sudden success from a new device in Moscow.
 
@@ -161,10 +218,10 @@ Z3r0Trust is a **multi-agent security system** powered by **Descope** and **Splu
 ## 🛠 Tech Stack
 
 * **Auth & Trust** – Descope Console (OAuth, Flows, Scoped Tokens)
-* **Backend Agents** – Python (FastAPI/Flask)
+* **Backend Agents** – Python backend(FastAPI, Flask), MCP and FastMCP, Phidata Agents and Tools
 * **Log Analytics** – Splunk (SPL, HEC, AI summarization)
-* **Frontend Dashboard** – React/Next.js
-* **Database** – PostgreSQL / MongoDB
+* **Frontend Dashboard** – React
+* **Database** – MySQL
 * **Email Service** – GROQ-based templating
 * **Cloud Services** – Google Console
 
@@ -173,6 +230,11 @@ Z3r0Trust is a **multi-agent security system** powered by **Descope** and **Splu
 ## 🎥 Demo Video
 
 📺 \[Insert Demo Video Link Here]
+
+---
+
+## 🎥 PPT Link
+📺 https://registan-fergana.my.canva.site/z3r0-trust
 
 ---
 
@@ -201,5 +263,5 @@ Z3r0Trust is built to be both **technically robust** and **human-centric**:
 
 ## 📧 Contact
 
-**Team United Visionaries**
+**Team Sentinal 5**
 

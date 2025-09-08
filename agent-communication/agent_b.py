@@ -1,33 +1,42 @@
-# agent_b.py
-import os
-import jwt  # PyJWT
-from flask import Flask, request, jsonify
-from descope import DescopeClient
-from dotenv import load_dotenv
+import requests
+from requests.auth import HTTPBasicAuth
 
-load_dotenv()
+# From Descope Inbound App B
+CLIENT_ID = "UDMyRGoxU0ZhT3hod3o0djBpOUQ2anNlRUpueTpUUEEzMlBYZzBlQ1RoSzVWcm5GSDByQUlDVjltZEs="
+CLIENT_SECRET = "Rw6KJE3gLGuwjq10cGF79ztCmtFl9tCPDBIRnZHTb78"
 
-app = Flask(__name__)
-client = DescopeClient(project_id=os.getenv("DESCOPE_PROJECT_ID"))
+TOKEN_URL = "https://api.descope.com/oauth2/v1/apps/token"
+SCOPE = "full_access"
 
-@app.route("/secure-data", methods=["POST"])
-def secure_data():
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"error": "Missing or invalid auth header"}), 401
+# Step 1: Get Access Token via Client Credentials Flow
+data = {
+    "grant_type": "client_credentials",
+    "scope": SCOPE,
+}
+response = requests.post(
+    TOKEN_URL,
+    data=data,
+    auth=HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET)
+)
 
-    token = auth_header.split(" ")[1]
+if response.status_code != 200:
+    raise Exception(f"Failed to get token: {response.text}")
 
-    try:
-        # Decode and verify the JWT manually using PyJWT
-        decoded = jwt.decode(token, options={"verify_signature": False})  # optional: verify signature if needed
-        return jsonify({
-            "status": "success",
-            "msg": "Hello from Agent B!",
-            "validated_agent": decoded.get("sub")
-        })
-    except Exception as e:
-        return jsonify({"error": "Invalid token", "details": str(e)}), 401
+access_token = response.json()["access_token"]
+print("Access Token:", access_token)
+print("✅ Got Access Token")
 
-if __name__ == "__main__":
-    app.run(port=5001)
+# Step 2: Call Agent A API with token
+headers = {"Authorization": f"Bearer {access_token}"}
+print(headers)
+resp = requests.get("http://localhost:5000/data", headers=headers)
+
+
+print("Response from Agent A:")
+print("📡 Status Code:", resp.status_code)
+print("📩 Raw Response:", resp.text)
+
+try:
+    print("📑 JSON Parsed:", resp.json())
+except Exception:
+    print("⚠️ Response was not JSON")

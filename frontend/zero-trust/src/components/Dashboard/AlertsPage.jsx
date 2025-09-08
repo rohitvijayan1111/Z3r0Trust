@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
+const backendUrl = import.meta.env.BACKEND;
 
 export function AlertsPage() {
   const [alertsData, setAlertsData] = useState([]);
-  const API_BASE = "http://127.0.0.1:5000/api";
+  const API_BASE = `${backendUrl}/api`;
 
   useEffect(() => {
     fetchAlerts();
@@ -22,13 +23,7 @@ export function AlertsPage() {
 
   const handleToggleBlockIP = async (alert) => {
     try {
-      if (alert.blockedIP) {
-        // Call undo endpoint
-        await axios.put(`${API_BASE}/responses/${alert.response_id}/undo`);
-      } else {
-        // Call block endpoint
-        await axios.put(`${API_BASE}/responses/${alert.response_id}/block`);
-      }
+      await axios.put(`${API_BASE}/responses/${alert.id}/block_ip`);
       fetchAlerts();
     } catch (err) {
       console.error("Error toggling block IP:", err);
@@ -37,13 +32,7 @@ export function AlertsPage() {
 
   const handleToggleBlockUser = async (alert) => {
     try {
-      if (alert.blockedUser) {
-        // Call undo endpoint
-        await axios.put(`${API_BASE}/responses/${alert.response_id}/undo`);
-      } else {
-        // Call block endpoint
-        await axios.put(`${API_BASE}/responses/${alert.response_id}/block`);
-      }
+      await axios.put(`${API_BASE}/responses/${alert.id}/block_user`);
       fetchAlerts();
     } catch (err) {
       console.error("Error toggling block User:", err);

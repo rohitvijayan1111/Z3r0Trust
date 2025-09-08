@@ -12,6 +12,48 @@ def get_alerts():
     alerts = Alert.get_all_alerts()
     return jsonify(alerts), 200
 
+
+@alerts_bp.route("/responses/<int:alert_id>/block_ip", methods=["PUT"])
+def block_ip(alert_id):
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "DB connection failed"}), 500
+    try:
+        cursor = conn.cursor()
+        # Toggle blockedIP
+        cursor.execute(
+            "UPDATE alerts SET blockedIP = NOT blockedIP WHERE id = %s", (alert_id,)
+        )
+        conn.commit()
+        return jsonify({"status": "success", "alert_id": alert_id})
+    except Exception as e:
+        print("Error updating blockedIP:", e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@alerts_bp.route("/responses/<int:alert_id>/block_user", methods=["PUT"])
+def block_user(alert_id):
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "DB connection failed"}), 500
+    try:
+        cursor = conn.cursor()
+        # Toggle blockedUser
+        cursor.execute(
+            "UPDATE alerts SET blockedUser = NOT blockedUser WHERE id = %s", (alert_id,)
+        )
+        conn.commit()
+        return jsonify({"status": "success", "alert_id": alert_id})
+    except Exception as e:
+        print("Error updating blockedUser:", e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 # Fetch alerts from external API and store in DB
 @alerts_bp.route("/alerts/fetch", methods=["POST"])
 def fetch_and_store_alerts():

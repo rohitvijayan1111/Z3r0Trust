@@ -18,7 +18,6 @@ from cache import  cache_cleaner, is_duplicate
 from alert_handler_agent import alert_handler_agent
 from mail_sender_agent import mail_sender_agent
 from server import send_email,authenticator,retrieve_unread_emails,tools_list
-import google.generativeai as genai
 import json
 
 load_dotenv()
@@ -163,7 +162,8 @@ def webhook():
         # processed.append(alert_data)
 
         print("reached storage post")
-        url = "http://localhost:5000/api/alerts/fetch"
+        path=os.getenv('IP_AND_PORT_2')
+        url = f"{path}/api/alerts/fetch"
 
         response = requests.post(url, json=alerts)
         new_id=response.json().get("new_id")
