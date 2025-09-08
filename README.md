@@ -11,7 +11,7 @@ Unlike traditional SIEMs that only record events, Z3r0Trust combines **Descope-b
 **Project Name:** Z3r0Trust – Autonomous Security, Human Trust
 **Short Description:** An AI-driven, multi-agent framework leveraging **Descope OAuth** for secure inter-agent communication, autonomous detection/response, and fair user management.
 
-**Team Name:** united visionaries
+**Team Name:** United Visionaries
 **Team Members:** Sample placeholders (replace with actual names)
 
 * Team 1: Member A, Member B
@@ -199,5 +199,5 @@ Z3r0Trust is built to be both **technically robust** and **human-centric**:
 
 ## 📧 Contact
 
-**Team Z3r0Trust**
-📩 [divakar3501@gmail.com](mailto:divakar3501@gmail.com)
+**Team United Visionaries**
+
