@@ -18,11 +18,11 @@ We are **Sentinel 5**, a passionate team of developers and security innovators d
 
 **Team Members:** 
 
-* Team 1: [Rohit Vijayan B](https://www.linkedin.com/in/rohitvijayan1111/)
-* Team 2: [Divakar G](https://www.linkedin.com/in/divakar3501/)
-* Team 3: [Rithik Raja S](https://github.com/RithikRaja28)
-* Team 4: [Gokul J](https://github.com/GokulJeyachandran-1 )
-* Team 5: [Kaviyarasu S](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)
+* [Rohit Vijayan B](https://www.linkedin.com/in/rohitvijayan1111/)
+* [Divakar G](https://www.linkedin.com/in/divakar3501/)
+* [Rithik Raja S](https://github.com/RithikRaja28)
+* [Gokul J](https://github.com/GokulJeyachandran-1 )
+* [Kaviyarasu S](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)
 
 ---
 
