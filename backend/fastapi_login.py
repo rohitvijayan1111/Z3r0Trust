@@ -4,7 +4,7 @@ from descope import DescopeClient
 import requests
 import user_agents
 import time
-
+import json
 app = FastAPI()
 
 DESCOPE_PROJECT_ID = "P32Dj1SFaOxhwz4v0i9D6jseEJny"
@@ -31,6 +31,20 @@ def get_location(ip: str) -> str:
 def parse_device(user_agent_str: str) -> str:
     ua = user_agents.parse(user_agent_str)
     return f"{ua.browser.family} {ua.browser.version_string} on {ua.os.family} {ua.os.version_string} ({ua.device.family or 'Unknown Device'})"
+
+SPLUNK_URL = "https://127.0.0.1:8088/services/collector"   # Splunk HEC endpoint
+HEC_TOKEN = "31459979-84f0-4f36-a09e-83326691c5e5"          # Replace with your HEC token
+INDEX = "zerotrust_logs"
+
+def send_to_splunk(events):
+    body = "\n".join(events)
+    headers = {"Authorization": f"Splunk {HEC_TOKEN}", "Content-Type": "application/json"}
+    try:
+        response = requests.post(SPLUNK_URL, headers=headers, data=body, verify=False)
+        return {"status_code": response.status_code, "response": response.text}
+    except requests.exceptions.RequestException as e:
+        return {"error": str(e)}
+
 
 @app.post("/login-with-email")
 async def login_with_email(payload: LoginPayload, request: Request):
@@ -64,6 +78,10 @@ async def login_with_email(payload: LoginPayload, request: Request):
             "Response": "success"
         }
 
+        # --- Send log to Splunk ---
+        event = json.dumps({"event": attributes})
+        send_to_splunk([event])
+
         return {"status": "success", "attributes": attributes, "session_jwt": session_jwt}
 
     except Exception as e:
@@ -71,15 +89,22 @@ async def login_with_email(payload: LoginPayload, request: Request):
         location = get_location(client_ip)
         user_agent_str = request.headers.get("user-agent", "unknown")
         device_info = parse_device(user_agent_str)
+
+        attributes = {
+            "Timestamp": int(time.time()),
+            "IP Address": client_ip,
+            "Geo Location": location,
+            "Device": device_info,
+            "Request type": payload.request_type,
+            "Response": "failure"
+        }
+
+        # --- Send failure log to Splunk ---
+        event = json.dumps({"event": attributes})
+        send_to_splunk([event])
+
         return {
             "status": "failure",
             "message": str(e),
-            "attributes": {
-                "Timestamp": int(time.time()),
-                "IP Address": client_ip,
-                "Geo Location": location,
-                "Device": device_info,
-                "Request type": payload.request_type,
-                "Response": "failure"
-            }
+            "attributes": attributes
         }
