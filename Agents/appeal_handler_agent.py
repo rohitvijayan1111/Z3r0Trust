@@ -73,7 +73,7 @@ def remove_block(user_id: str,ref_id) -> str:
 
         prompt = f"set status column to 0 where the ref_id is {ref_id} in the appeal table "
         db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
-          
+
         return f"Block removed for {user_id}"
     except Exception as e:
         log.exception("Error in remove_block")
@@ -111,7 +111,8 @@ def appeal_handler_agent(appeal: Dict[str, Any],access_key:str):
 
     user_id=appeal.get("email")
     ref_id=appeal.get('ref_id')
-    url = "http://localhost:5000/api/alerts/fetchbyid"
+    path=os.getenv('IP_AND_PORT_2')
+    url = f"{path}/api/alerts/fetchbyid"
     alert = requests.post(url, json={"id":ref_id})
     try:
         if not user_id or not ref_id:

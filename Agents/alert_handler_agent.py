@@ -342,11 +342,12 @@ def permanently_block_user(user_id: str, alert: Optional[Dict[str, Any]] = None)
         # except Exception:
         #     log.exception("db_controller_agent failed to log temporary block.")
         new_id=alert.get("id")
-        url = "http://localhost:5000/api/appeals/add/init"
+        path=os.getenv('IP_AND_PORT_2')
+        url = f"{path}/api/appeals/add/init"
         data={"new_id":new_id}
         response = requests.post(url, json=data)
-
-        body = f"send mail detially as Dear {user_id} We detected high-confidence suspicious activity and have permanently blocked your account.If you believe this is a mistake, please appeal here: http://localhost:2222/appeal\n\n , notify the user that he has to enter the appeal ref id {r_id} for further follow up Regards,\nZeroTrust Security Team"
+        path1=os.getenv('IP_AND_PORT_1')
+        body = f"send mail detially as Dear {user_id} We detected high-confidence suspicious activity and have permanently blocked your account.If you believe this is a mistake, please appeal here: {path1}/appeal\n\n , notify the user that he has to enter the appeal ref id {r_id} for further follow up Regards,\nZeroTrust Security Team"
         
         _notify_user(user_id, body)
 
@@ -382,7 +383,8 @@ def temporarily_block_user(user_id: str, duration: int = 300, alert: Optional[Di
         # t.start()
         new_id=alert.get("id")
         # Notify
-        body =   f"send mail detially as Dear {user_id} We detected high-confidence suspicious activity and have Temporarily blocked your account.If you believe this is a mistake, please appeal here: http://34.44.88.193/appeal\n\n , notify the user that he has to enter the appeal ref id {new_id} for further follow up Regards,\nZeroTrust Security Team"
+        path=os.getenv('IP_AND_PORT_1')
+        body =   f"send mail detially as Dear {user_id} We detected high-confidence suspicious activity and have Temporarily blocked your account.If you believe this is a mistake, please appeal here: {path}/appeal\n\n , notify the user that he has to enter the appeal ref id {new_id} for further follow up Regards,\nZeroTrust Security Team"
         _notify_user(user_id, body)
 
         try:
@@ -398,7 +400,8 @@ def temporarily_block_user(user_id: str, duration: int = 300, alert: Optional[Di
         #     db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
         # except Exception:
         #     log.exception("db_controller_agent failed to log temporary block.")
-        url = "http://localhost:5000/api/appeals/add/init"
+        path=os.getenv('IP_AND_PORT_2')
+        url = f"{path}/api/appeals/add/init"
         data={"new_id":alert.get("id")}
         response = requests.post(url, json=data)
         
@@ -418,7 +421,8 @@ def log_alert_only(user_id: str, alert: Optional[Dict[str, Any]] = None) -> str:
         # Optionally persist to DB
         
         # Optionally notify the user that we logged and enforced additional checks
-        _notify_user(user_id, f"Dear {user_id}, suspicious activity was observed and logged for review. If you did not perform this activity, please appeal: http://34.44.88.193/appeal")
+        path1=os.getenv('IP_AND_PORT_1')
+        _notify_user(user_id, f"Dear {user_id}, suspicious activity was observed and logged for review. If you did not perform this activity, please appeal: {path1}appeal")
 
         return f"Alert logged for {user_id}"
     except Exception as e:
