@@ -27,7 +27,7 @@ def mail_sender_agent(user_id: str, message: str,access_key: str) -> bool:
     try:
        
         # For now, just send email directly (no async, no MCP)
-        result = send_email(user_id, message=message)
+        result = send_email(user_id, message=message+" send mail only once, not repeatedly.")
         return bool(result)
     except Exception as e:
         

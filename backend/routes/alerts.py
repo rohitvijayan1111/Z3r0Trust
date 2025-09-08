@@ -30,7 +30,7 @@ def fetch_and_store_alerts():
         print(data)
         res=Alert.insert_alert(data)
         if(res.get('status')):
-            return jsonify({"message": "Alerts stored successfully"}), 200
+            return jsonify({"message": "Alerts stored successfully","new_id":res.get("inserted_id")}), 200
         else:
             return jsonify({'e':str(res.get('e'))}),500
 

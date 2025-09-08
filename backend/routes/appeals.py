@@ -14,6 +14,21 @@ def get_appeals():
         print("Error fetching appeals:", e)
         return jsonify([]), 500
 
+
+@appeals_bp.route("/appeals/add/init",methods=["POST"])
+def init_appeal():
+    try:
+        data=request.get_json()
+        appeal_id=Appeal.insert_appeal_init(data)
+        if not appeal_id:
+            return jsonify({"error": "Failed to insert appeal"}), 500
+
+        return jsonify({"message": "Appeal added successfully", "id": appeal_id}), 201
+
+
+    except Exception as e:
+        return jsonify({"error":str(e)}),500
+
 @appeals_bp.route("/appeals/add", methods=["POST"])
 def add_appeal():
     try:

@@ -9,8 +9,28 @@ class Appeal:
         try:
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO appeal (subject, content, response_id, status) VALUES (%s, %s, %s, %s)",
-                (data["subject"], data["content"], data["response_id"], 1)  # default active
+                "INSERT INTO appeal (subject, content, status,ref_id) VALUES (%s, %s, %s,%s )",
+                (data["subject"], data["content"], 1)  # default active
+            )
+            conn.commit()
+            return cursor.lastrowid
+        except Exception as e:
+            print("Error inserting appeal:", e)
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def insert_appeal_init(data):
+        conn = get_db_connection()
+        if not conn:
+            return None
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO appeal (subject, content, status,ref_id) VALUES (%s, %s, %s,%s )",
+                (None,None,1,data.get("new_id"))  # default active
             )
             conn.commit()
             return cursor.lastrowid
