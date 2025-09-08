@@ -1,8 +1,8 @@
 # 🔐 Z3r0Trust – Autonomous Security, Human Trust
 
-Z3r0Trust is an autonomous multi-agent security framework powered by Descope to safeguard enterprise systems against modern cyber threats. It continuously authenticates, detects, analyzes, responds, and manages suspicious activities — while ensuring transparency, fairness, and SOC oversight.
+Z3r0Trust is an autonomous multi-agent security framework powered by Descope to safeguard enterprise systems against modern cyber threats. It continuously authenticates, detects, analyzes, responds, and manages suspicious activities — while ensuring transparency, fairness and SOC oversight.
 
-Unlike traditional SIEMs that only record events, Z3r0Trust combines Descope-based authentication & delegation, real-time log intelligence, autonomous response, AI-driven summaries, and human appeal workflows to create a resilient defense ecosystem.
+Unlike traditional SIEMs that only record events, Z3r0Trust combines Descope-based authentication & delegation, real-time log intelligence, autonomous response and human appeal workflows to create a resilient defense ecosystem.
 
 Descope acts as a middleware security layer for third-party applications, protecting them from brute force, credential stuffing, suspicious API usage, and more. Any third-party application integrating with Z3r0Trust creates a proxy URL that routes backend traffic through Z3r0Trust middleware. This ensures logs are captured, anomalies are detected, and malicious actors are blocked automatically.
 
@@ -18,11 +18,11 @@ We are **Sentinel 5**, a passionate team of developers and security innovators d
 
 **Team Members:** 
 
-* Team 1: Member A, Member B
-* Team 2: Member C, Member D
-* Team 3: Member E, Member F
-* Team 4: Member G, Member H
-* Team 5: Member I, Member J
+* Team 1: [Rohit Vijayan B](https://www.linkedin.com/in/rohitvijayan1111/)
+* Team 2: [Divakar G](https://www.linkedin.com/in/divakar3501/)
+* Team 3: [Rithik Raja S](https://github.com/RithikRaja28)
+* Team 4: [Gokul J](https://github.com/GokulJeyachandran-1 )
+* Team 5: [Kaviyarasu S](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)
 
 ---
 
@@ -134,8 +134,7 @@ flowchart LR
   * **Low Frequency (5 hrs):** Data exfiltration, insider abuse, network anomalies.
 * Maintains **MD5 hash cache** (alert\_name.username.ip.device) to prevent duplicate alerts.
 * Forwards validated anomalies to Responder Agent.
-
-[Kaviyaraus](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)
+* 
 
 ### 📧 Mail Sender Agent
 
@@ -219,10 +218,10 @@ Z3r0Trust is a **multi-agent security system** powered by **Descope** and **Splu
 ## 🛠 Tech Stack
 
 * **Auth & Trust** – Descope Console (OAuth, Flows, Scoped Tokens)
-* **Backend Agents** – Python (FastAPI/Flask)
+* **Backend Agents** – Python backend(FastAPI, Flask), MCP and FastMCP, Phidata Agents and Tools
 * **Log Analytics** – Splunk (SPL, HEC, AI summarization)
-* **Frontend Dashboard** – React/Next.js
-* **Database** – PostgreSQL / MongoDB
+* **Frontend Dashboard** – React
+* **Database** – MySQL
 * **Email Service** – GROQ-based templating
 * **Cloud Services** – Google Console
 
