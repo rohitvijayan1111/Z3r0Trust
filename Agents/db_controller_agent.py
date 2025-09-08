@@ -3,9 +3,16 @@ from phi.tools.sql import SQLTools
 import os
 from phi.model.groq import Groq
 from dotenv import load_dotenv
+from descope import DescopeClient
 
 
-def db_controller_agent(prompt):
+descope = DescopeClient(project_id=os.getenv("DESCOPE_PROJECT_ID"))
+
+
+def db_controller_agent(prompt,access_key):
+    token = descope.exchange_access_key(access_key=access_key).get('sessionToken', {}).get('jwt')
+    if not token:
+        return "Access Key Not Valid"
     "This agent only do the modification in the database, but not fetch and show anything, it is for purpose"
     model_id="Llama-3-Groq-8B-Tool-Use"
     load_dotenv()

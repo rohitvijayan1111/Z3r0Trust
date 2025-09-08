@@ -22,13 +22,11 @@ import json
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 nest_asyncio.apply()
 
-PROJECT_ID = "P32Dj1SFaOxhwz4v0i9D6jseEJny"
-descope = DescopeClient(project_id=PROJECT_ID)
+
+descope = DescopeClient(project_id=os.getenv("DESCOPE_PROJECT_ID"))
 
 server_params = StdioServerParameters(
     command="python",  
@@ -40,7 +38,7 @@ server_params = StdioServerParameters(
 app = Flask(__name__)
 
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL")
-DESCOPE_ACCESS_KEY = os.getenv("DESCOPE_ACCESS_KEY")
+
 
 # --------- Health check ---------
 @app.route("/", methods=["GET"])
@@ -82,7 +80,7 @@ def send_email_route():
     message = data.get("message")
     print(email_id, message)
 
-    success = mail_sender_agent(email_id, message)
+    success = mail_sender_agent(email_id, message,os.getenv("EMAIL_SENDER_AGENT_ACCESS_KEY"))
 
     return jsonify({"status": "sent" if success else "failed"})
 
@@ -113,10 +111,10 @@ def handle_appeal():
     print(f"1: {subject1} - {content1}")
 
     prompt = f"add the entry to the table 'appeal'(id	int,subject	varchar(200), content	varchar(2000), status	tinyint(1)), here the subject {subject1}, content {content1}, status 1"
-    db_controller_agent(prompt=prompt)
+    db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
 
     prompt = f"mail to {emailid} as appeal recieved successfully, forwarded to our AI agent and SOC, will get back to you within two working days, thank you, ZeroTrust team"
-    mail_sender_agent(emailid,prompt)
+    mail_sender_agent(emailid,prompt,os.getenv("EMAIL_SENDER_AGENT_ACCESS_KEY"))
 
     # Returning JS alert to close window
     return Response("""
@@ -176,10 +174,10 @@ def webhook():
             f"send email to {user} that Dear {user} Our monitoring detected suspicious activity: {alerts} Your account may be blocked if this continues.Regards, ZeroTrust Security Monitoring Team"
         )
         print("alert reached mail agent")
-        mail_sender_agent(alerts.get("user"),prompt)
+        mail_sender_agent(alerts.get("user"),prompt,os.getenv("EMAIL_SENDER_AGENT_ACCESS_KEY"))
         print(f"✅ Processed alert: {alert_name} for {alerts.get('user')}")
         print("\nreached alert agent\n")
-        alert_handler_agent(alert=alerts)
+        alert_handler_agent(alert=alerts,access_key=os.getenv("ALERT_HANDLER_AGENT_ACCESS_KEY"))
         return {"result":"success"}
         # return {
         #     "status": "done",

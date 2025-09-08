@@ -225,22 +225,16 @@ from typing import Any, Dict, Optional
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
+load_dotenv()
 # Optional imports from your project (safe guarded)
-try:
-    from mail_sender_agent import mail_sender_agent
-except Exception:
-    mail_sender_agent = None
 
-try:
-    from db_controller_agent import db_controller_agent
-except Exception:
-    db_controller_agent = None
+from mail_sender_agent import mail_sender_agent
 
-# Descope client
-try:
-    from descope import DescopeClient
-except Exception:
-    DescopeClient = None
+
+from db_controller_agent import db_controller_agent
+
+from descope import DescopeClient
+
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
@@ -253,7 +247,7 @@ DESCOPE_MANAGEMENT_KEY = os.getenv("DESCOPE_MANAGEMENT_KEY")
 descope_client = None
 if DescopeClient and DESCOPE_PROJECT_ID and DESCOPE_MANAGEMENT_KEY:
     try:
-        descope_client = DescopeClient(project_id=DESCOPE_PROJECT_ID, management_key=DESCOPE_MANAGEMENT_KEY)
+        descope_client = DescopeClient(project_id=DESCOPE_PROJECT_ID)
         log.info("Descope client initialized.")
     except Exception as e:
         log.error(f"Failed to init Descope client: {e}")
@@ -273,13 +267,13 @@ def _notify_user(user_id: str, message: str) -> None:
     try:
         # Try common call signatures
         try:
-            mail_sender_agent(user_id, message)  # positional
+            mail_sender_agent(user_id, message,os.getenv("EMAIL_SENDER_AGENT_ACCESS_KEY"))  # positional
         except TypeError:
             # fallback to named args if the function expects them
             try:
-                mail_sender_agent(email_id=user_id, message=message)
+                mail_sender_agent(user_id=user_id, message=message, access_key=os.getenv("EMAIL_SENDER_AGENT_ACCESS_KEY"))
             except Exception:
-                mail_sender_agent(user_id=user_id, message=message)
+                mail_sender_agent(user_id=user_id, message=message,access_key=os.getenv("EMAIL_SENDER_AGENT_ACCESS_KEY"))
         log.info(f"Notification sent to {user_id}.")
     except Exception as e:
         log.exception(f"Failed to notify {user_id}: {e}")
@@ -341,7 +335,8 @@ def permanently_block_user(user_id: str, alert: Optional[Dict[str, Any]] = None)
         # Optionally log to DB
         if db_controller_agent:
             try:
-                db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','permanent_block','{alert}')")
+                prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','permanent_block','{alert}')"
+                db_controller_agent(prompt=prompt,access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
             except Exception:
                 log.exception("db_controller_agent failed to log permanent block.")
 
@@ -385,11 +380,10 @@ def temporarily_block_user(user_id: str, duration: int = 3600, alert: Optional[D
         )
         _notify_user(user_id, body)
 
-        if db_controller_agent:
-            try:
-                db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','temporary_block','{alert}')")
-            except Exception:
-                log.exception("db_controller_agent failed to log temporary block.")
+        try:
+            db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','temporary_block','{alert}')",access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
+        except Exception:
+            log.exception("db_controller_agent failed to log temporary block.")
 
         return msg
     except Exception as e:
@@ -404,11 +398,11 @@ def log_alert_only(user_id: str, alert: Optional[Dict[str, Any]] = None) -> str:
         log.info(log_msg)
 
         # Optionally persist to DB
-        if db_controller_agent:
-            try:
-                db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','log_only','{alert}')")
-            except Exception:
-                log.exception("db_controller_agent failed to log alert-only event.")
+        
+        try:
+            db_controller_agent(prompt=f"INSERT INTO alerts (user,action,reason) VALUES ('{user_id}','log_only','{alert}')",access_key=os.getenv("DB_CONTROLLER_AGENT_ACCESS_KEY"))
+        except Exception:
+            log.exception("db_controller_agent failed to log alert-only event.")
 
         # Optionally notify the user that we logged and enforced additional checks
         _notify_user(user_id, f"Dear {user_id}, suspicious activity was observed and logged for review. If you did not perform this activity, please appeal: http://34.44.88.193/appeal")
@@ -464,11 +458,15 @@ def logout_account(session_token: str, user_id: Optional[str] = None, alert: Opt
 
 # ------------------ Decision function (callable directly) ------------------
 
-def alert_handler_agent(alert: Dict[str, Any], temp_duration: int = 3600) -> str:
+def alert_handler_agent(alert: Dict[str, Any],access_key:str, temp_duration: int = 3600) -> str:
     """
     Decide action based on confidence score in `alert` and call the proper tool.
     Returns a summary string.
     """
+    token = descope_client.exchange_access_key(access_key=access_key).get('sessionToken', {}).get('jwt')
+    if not token:
+        return "Access Key Not Valid"
+    
     if not isinstance(alert, dict):
         return "Invalid alert payload (expected dict)."
 

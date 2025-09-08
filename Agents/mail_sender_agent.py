@@ -8,15 +8,24 @@ from db_controller_agent import db_controller_agent
 mcp = FastMCP("AlertHandler")
 import asyncio
 from server import send_email
+from descope import DescopeClient
+
+
+
+descope = DescopeClient(project_id=os.getenv("DESCOPE_PROJECT_ID"))
+
 
 load_dotenv()
 
-def mail_sender_agent(user_id: str, message: str) -> bool:
+def mail_sender_agent(user_id: str, message: str,access_key: str) -> bool:
+    token = descope.exchange_access_key(access_key=access_key).get('sessionToken', {}).get('jwt')
+    if not token:
+        return False
     """
     This agent decides what action to take
     """
     try:
-        descope_access_key = os.getenv("DESCOPE_ACCESS_KEY")
+       
         # For now, just send email directly (no async, no MCP)
         result = send_email(user_id, message=message)
         return bool(result)
