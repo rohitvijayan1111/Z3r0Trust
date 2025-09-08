@@ -129,7 +129,6 @@ flowchart LR
 * Receives logs from Detector Agent.
 * Sends data to **Splunk** for real-time processing.
 * Splunk processes in 3 tiers:
-
   * **High Frequency (5 mins):** Brute force, credential stuffing, suspicious API usage, bot/malware.
   * **Medium Frequency (30 mins):** Impossible travel, account takeover, privilege escalation.
   * **Low Frequency (5 hrs):** Data exfiltration, insider abuse, network anomalies.
@@ -147,7 +146,6 @@ flowchart LR
 * Handles outbound email notifications.
 * Pre-configured with secure sender ID and app passkey.
 * Use cases:
-
   * Alert user of suspicious activity.
   * Notify SOC with forensic details.
   * Confirm appeal submission.
@@ -157,7 +155,6 @@ flowchart LR
 
 * Processes alert data.
 * Decides on appropriate action:
-
   * Temporary/Permanent block
   * User logout or session invalidation
   * Enforce MFA
