@@ -12,7 +12,7 @@ export function SignupFormDemo() {
   const navigate = useNavigate();
 
   return (
-    <AuthProvider projectId="P32DvqStnvlzxBbYFSmAYq74fsPQ">
+    <AuthProvider projectId="P32Dj1SFaOxhwz4v0i9D6jseEJny">
       <div className="absolute inset-0 -z-10">
         {/* Background Blurs */}
         <div className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 opacity-30 blur-3xl" />
@@ -71,10 +71,18 @@ export function SignupFormDemo() {
                         JSON.stringify(e.detail.user)
                       );
 
+                      const role =
+                        localStorage.getItem("userRole") || "customer"; // fallback to "customer"
                       setMessage(
                         isSignup ? "Signup successful!" : "Login successful!"
                       );
-                      navigate("/dashboard"); // Redirect to dashboard
+
+                      // Navigate based on role
+                      if (role === "soc") {
+                        navigate("/dashboard");
+                      } else {
+                        navigate("/integrateApi");
+                      } // Redirect to dashboard
                     }}
                     onError={(err) => {
                       console.error("Auth Error:", err);
