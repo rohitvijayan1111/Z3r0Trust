@@ -8,81 +8,78 @@ import {
   IconServer,
   IconUserCheck,
 } from "@tabler/icons-react";
+import { useState } from "react";
 
 export function FeaturesSectionDemo() {
+  const [loading, setLoading] = useState(null);
+  const [response, setResponse] = useState(null);
+
+  const API_BASE = "http://127.0.0.1:5000/api/payloads";
+
   const agents = [
     {
       title: "Analyzer Agent",
-      description:
-        "The Analyzer Agent takes flagged events, assesses risk, correlates with other data, and recommends mitigation.",
       examples: [
         {
           riskType: "Brute Force / Credential Abuse",
-          correlation:
-            "Compute risk score based on # failed attempts & history",
-          action: "Risk = High if >50 failed logins",
-          simulation: "Example: 3 failed logins + 1 unusual IP = medium risk",
+          endpoint: `${API_BASE}/password_bruteforce`,
           icon: <IconLock className="w-8 h-8 text-red-500" />,
         },
         {
-          riskType: "Impossible Travel / Account Takeover",
-          correlation: "Check geolocation, device fingerprint, session history",
-          action: "Risk = High if IP jump >5000 km in <1 hour",
-          simulation:
-            "Example: unusual login from another country triggers alert",
+          riskType: "Credential Stuffing",
+          endpoint: `${API_BASE}/credential_stuffing`,
           icon: <IconDeviceLaptop className="w-8 h-8 text-purple-500" />,
         },
         {
-          riskType: "Bot/Malware Detection",
-          correlation: "Compare request patterns to normal behavior",
-          action: "Risk = Medium if >100 rapid requests",
-          simulation: "Example: high frequency API calls from same IP",
+          riskType: "Impossible Travel / Account Takeover",
+          endpoint: `${API_BASE}/simulate_impossible_travel`,
           icon: <IconServer className="w-8 h-8 text-yellow-400" />,
         },
         {
-          riskType: "Privilege Escalation",
-          correlation: "Check user roles and access patterns",
-          action: "Suggest review by security team",
-          simulation: "Example: User suddenly granted admin rights",
+          riskType: "Bot/Malware Detection",
+          endpoint: `${API_BASE}/malware_bot_behaviour`,
           icon: <IconUserCheck className="w-8 h-8 text-blue-400" />,
         },
         {
-          riskType: "Suspicious API / Data Exfiltration",
-          correlation: "Check for large downloads, repetitive requests",
-          action: "Risk = High if >500MB downloaded from sensitive endpoints",
-          simulation: "Example: multiple downloads of confidential reports",
+          riskType: "Privilege Escalation",
+          endpoint: `${API_BASE}/privilege_escalation`,
           icon: <IconAlertCircle className="w-8 h-8 text-orange-400" />,
         },
         {
-          riskType: "Internal Misuse",
-          correlation: "Cross-check with normal employee behavior",
-          action: "Combine multiple low-risk events into higher-risk alert",
-          simulation:
-            "Example: Employee accessing sensitive files at odd hours",
+          riskType: "Suspicious API / Data Exfiltration",
+          endpoint: `${API_BASE}/data_exfiltration`,
           icon: <IconShieldCheck className="w-8 h-8 text-green-400" />,
         },
         {
-          riskType: "Correlation Alert",
-          correlation:
-            "Combine multiple low-risk events into a higher-risk alert",
-          action: "Risk = Medium if multiple small anomalies detected",
-          simulation: "Example: 3 failed logins + 1 unused IP = medium risk",
+          riskType: "Network Anomalies",
+          endpoint: `${API_BASE}/network_anomalies`,
           icon: <IconShieldCheck className="w-8 h-8 text-pink-500" />,
         },
       ],
     },
   ];
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-900 to-black">
-      {/* Navbar */}
-      <div className="top-0 left-0 w-full shadow-md z-50">
-        <div className="">
-          <img src="logo.png" alt="logo" className="w-50 h-45 py-2 px-2" />
-        </div>
-      </div>
+  // Call API when button is clicked
+  const handleBeginClick = async (endpoint) => {
+    setLoading(endpoint);
+    setResponse(null);
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await res.json();
+      setResponse({ endpoint, data });
+    } catch (err) {
+      console.error(err);
+      setResponse({ endpoint, data: { error: err.message } });
+    } finally {
+      setLoading(null);
+    }
+  };
 
-      {/* Agents Section */}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-zinc-900 to-black p-6">
       <div className="max-w-7xl mx-auto space-y-12">
         {agents.map((agent) => (
           <div key={agent.title}>
@@ -100,27 +97,25 @@ export function FeaturesSectionDemo() {
                         {item.riskType}
                       </h3>
                     </div>
-                    <p className="text-neutral-400 text-sm">
-                      <span className="font-semibold">Correlation:</span>{" "}
-                      {item.correlation}
-                    </p>
-                    <p className="text-neutral-400 text-sm">
-                      <span className="font-semibold">Analyzer Action:</span>{" "}
-                      {item.action}
-                    </p>
-                    <p className="text-neutral-400 text-sm">
-                      <span className="font-semibold">Example Simulation:</span>{" "}
-                      {item.simulation}
-                    </p>
                   </div>
-                  <button className="mt-4 rounded-md bg-gradient-to-br from-black to-neutral-600 px-4 py-2 text-white font-medium shadow-md hover:opacity-90 dark:from-zinc-800 dark:to-zinc-700 transition">
-                    Begin
+                  <button
+                    className="mt-4 rounded-md bg-gradient-to-br from-black to-neutral-600 px-4 py-2 text-white font-medium shadow-md hover:opacity-90 dark:from-zinc-800 dark:to-zinc-700 transition"
+                    onClick={() => handleBeginClick(item.endpoint)}
+                  >
+                    {loading === item.endpoint ? "Processing..." : "Begin"}
                   </button>
                 </motion.div>
               ))}
             </div>
           </div>
         ))}
+
+        {/* Show last API response */}
+        {response && (
+          <pre className="mt-6 p-4 bg-zinc-900 text-green-400 rounded-lg overflow-x-auto">
+            {JSON.stringify(response, null, 2)}
+          </pre>
+        )}
       </div>
     </div>
   );

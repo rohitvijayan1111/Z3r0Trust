@@ -7,60 +7,67 @@ export function UserDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const session_jwt = localStorage.getItem("session_jwt");
-
+  console.log(session_jwt);
   useEffect(() => {
     if (!session_jwt) {
+      console.error("Not Authorized: No JWT found in localStorage");
       setError("No session found. Please log in.");
       setLoading(false);
       return;
     }
 
-    let user_id = null;
-    try {
-      const authData = JSON.parse(
-        localStorage.getItem("auth_response") || "{}"
-      );
-      user_id = authData.user_id;
-      console.log("User ID:", user_id);
-      if (!user_id) throw new Error("Invalid auth data");
-    } catch (e) {
-      setError("Invalid session. Please log in again.");
-      setLoading(false);
-      return;
-    }
-    console.log("Calling balance API for user:", user_id);
-
-
     const fetchData = async () => {
       try {
-        const balanceRes = await fetch(
-          `http://localhost:5000/api/balance?user_id=${user_id}`
-        );
-        if (!balanceRes.ok) throw new Error("Failed to fetch balance");
+        const authResponse = JSON.parse(localStorage.getItem("auth_response"));
+        const userEmail = authResponse?.user_id;
+
+        if (!userEmail) {
+          throw new Error("No user email found in localStorage");
+        }
+
+        // ✅ Add X-User-Email header
+        const balanceRes = await fetch("http://localhost:8000/api/balance", {
+          headers: {
+            Authorization: `Bearer ${session_jwt}`,
+            "X-User-Email": userEmail,
+          },
+        });
+
+        if (balanceRes.status === 401) {
+          throw new Error("Unauthorized access");
+        }
+
         const balanceData = await balanceRes.json();
-        console.log("Balance data:", balanceData);
         setBalance(balanceData.balance);
 
-        const txRes = await fetch(
-          `http://localhost:5000/api/transactions?user_id=${user_id}`
-        );
-        if (!txRes.ok) throw new Error("Failed to fetch transactions");
+        const txRes = await fetch("http://localhost:8000/api/transactions", {
+          headers: {
+            Authorization: `Bearer ${session_jwt}`,
+            "X-User-Email": userEmail,
+          },
+        });
+
+        if (txRes.status === 401) {
+          throw new Error("Unauthorized access");
+        }
+
         const txData = await txRes.json();
         setTransactions(txData);
       } catch (err) {
-        setError("Error fetching data from server.");
+        console.error(err.message);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [session_jwt]);
+
 
   const handleLogout = () => {
     localStorage.removeItem("session_jwt");
     localStorage.removeItem("auth_response");
-    window.location.reload(); // Reload app → goes back to login
+    window.location.reload();
   };
 
   if (loading) {
@@ -138,10 +145,12 @@ export function UserDashboard() {
                 </div>
                 <p
                   className={`font-semibold ${
-                    tx.amount < 0 ? "text-red-500" : "text-green-500"
+                    tx.description === "Debit"
+                      ? "text-red-500"
+                      : "text-green-500"
                   }`}
                 >
-                  {tx.amount < 0 ? "-" : "+"}₹{Math.abs(tx.amount)}
+                  {tx.description === "Debit" ? "-" : "+"}₹{tx.amount}
                 </p>
               </div>
             ))

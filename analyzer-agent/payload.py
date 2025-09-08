@@ -49,7 +49,7 @@ def password_bruteforce():
 
 
 def credential_stuffing():
-    user = "bob@example.com"
+    user = "broh22012.it@rmkec.ac.in"
     geo = "UK"
     devices = ["Chrome-Windows", "Firefox-Linux", "Edge-Windows", "Safari-Mac", "Opera-Windows"]
 
@@ -279,7 +279,7 @@ def simulate_impossible_travel():
 
 
 def privilege_escalation():
-    user = "alice@example.com"   # Normal user (not admin)
+    user = "broh22012.it@rmkec.ac.in"   # Normal user (not admin)
     base_time = datetime.now(UTC)
     events = []
 
@@ -315,7 +315,7 @@ def privilege_escalation():
         print("Error:", str(e))
 
 def account_takeover():
-    user = "alice@example.com"
+    user = "broh22012.it@rmkec.ac.in"
     base_time = datetime.now(UTC)
     events = []
 
@@ -365,7 +365,7 @@ def account_takeover():
             "index": INDEX,
             "event": {
                 "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "username": "bob@example.com",
+                "username": "broh22012.it@rmkec.ac.in",
                 "Ip Address": "198.51.100.77",
                 "Geo Location": "IN",
                 "Request type": "login_attempt",
@@ -382,7 +382,7 @@ def account_takeover():
         "index": INDEX,
         "event": {
             "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "username": "bob@example.com",
+            "username": "broh22012.it@rmkec.ac.in",
             "Ip Address": "192.0.2.44",         # new IP
             "Geo Location": "SG",               # new Geo
             "Request type": "login_attempt",
@@ -404,7 +404,7 @@ def account_takeover():
 
 
 def privilege_escalation():
-    user = "alice@example.com"   # Normal user (not admin)
+    user = "broh22012.it@rmkec.ac.in"   
     base_time = datetime.now(UTC)
     events = []
 
@@ -439,7 +439,85 @@ def privilege_escalation():
     except requests.exceptions.RequestException as e:
         print("Error:", str(e))
 
+def network_anomalies():
+    base_time = datetime.now(UTC) - timedelta(hours=1)  # 1 hour ago
+    events = []
+
+    # Simulate one IP scanning 60 unique ports
+    ip_address = "203.0.113.10"
+    for port in range(1000, 1060):  # 60 ports
+        event_time = base_time + timedelta(seconds=random.randint(0, 300))
+        payload = {
+            "time": int(event_time.timestamp()),
+            "sourcetype": "_json",
+            "index": INDEX,
+            "event": {
+                "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "ip": ip_address,
+                "port": port,
+                "endpoint": f"/service/{port}",
+                "action": "network_probe",
+                "status": "blocked",
+                "device": "N/A",
+                "username": "N/A",
+                "Geo Location": "US"
+            }
+        }
+        events.append(json.dumps(payload))
+
+    # Send all events to Splunk HEC
+    body = "\n".join(events)
+    headers = {"Authorization": f"Splunk {HEC_TOKEN}", "Content-Type": "application/json"}
+
+    try:
+        response = requests.post(SPLUNK_URL, headers=headers, data=body, verify=False)
+        print("Network Anomalies ->", response.status_code, response.text)
+    except requests.exceptions.RequestException as e:
+        print("Error:", str(e))
+
+def data_exfiltration():
+    base_time = datetime.now(UTC)
+    events = []
+
+    users = [
+        {"username": "broh22012.it@rmkec.ac.in", "ip": "192.168.1.10", "device": "Chrome-Windows", "geo": "UK"},
+        {"username": "diva22022.it@rmkec.ac.in", "ip": "192.168.1.20", "device": "Firefox-Linux", "geo": "US"}
+    ]
+
+    # Each user downloads multiple files
+    download_sizes = [600, 200, 350, 1200]  # in MB
+
+    for user in users:
+        for i, size in enumerate(download_sizes):
+            event_time = base_time + timedelta(minutes=i * 5)
+            payload = {
+                "time": int(event_time.timestamp()),
+                "sourcetype": "_json",
+                "index": INDEX,
+                "event": {
+                    "timestamp": event_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "username": user["username"],
+                    "Ip Address": user["ip"],
+                    "Geo Location": user["geo"],
+                    "Request type": "download",
+                    "Response": "success",
+                    "device": user["device"],
+                    "size_MB": size
+                }
+            }
+            events.append(json.dumps(payload))
+
+    # --- Send all events to Splunk HEC ---
+    body = "\n".join(events)
+    headers = {"Authorization": f"Splunk {HEC_TOKEN}", "Content-Type": "application/json"}
+
+    try:
+        response = requests.post(SPLUNK_URL, headers=headers, data=body, verify=False)
+        print("Data Exfiltration ->", response.status_code, response.text)
+    except requests.exceptions.RequestException as e:
+        print("Error:", str(e))
+
 
 if __name__ == "__main__":
-    password_bruteforce()
+    data_exfiltration()
 

@@ -6,6 +6,15 @@ import { TextGenerateEffectDemo } from "./Text";
 import "./style.css";
 
 export function GlobeDemo() {
+  const [role, setRole] = useState("customer");
+
+    useEffect(() => {
+      const savedRole = localStorage.getItem("userRole");
+      if (savedRole) {
+        setRole(savedRole);
+      }
+    }, []);
+
   const globeConfig = {
     pointSize: 4,
     globeColor: "#062056",
@@ -394,60 +403,79 @@ export function GlobeDemo() {
   ];
 
    return (
-    <div className="relative flex items-center justify-center min-h-screen w-full overflow-hidden bg-white dark:bg-black">
-      {/* Animated blurry background */}
-      <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-        <div className="absolute w-[60%] h-[60%] bg-blue-400/50 rounded-full filter blur-3xl animate-blob top-0 left-10"></div>
-        <div className="absolute w-[50%] h-[50%] bg-pink-400/50 rounded-full filter blur-3xl animate-blob animation-delay-2000 top-1/3 left-1/2"></div>
-        <div className="absolute w-[70%] h-[70%] bg-purple-400/50 rounded-full filter blur-3xl animate-blob animation-delay-4000 top-1/2 left-1/4"></div>
-      </div>
+     <div className="relative flex items-center justify-center min-h-screen w-full overflow-hidden bg-white dark:bg-black">
+       {/* Animated blurry background */}
+       <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+         <div className="absolute w-[60%] h-[60%] bg-blue-400/50 rounded-full filter blur-3xl animate-blob top-0 left-10"></div>
+         <div className="absolute w-[50%] h-[50%] bg-pink-400/50 rounded-full filter blur-3xl animate-blob animation-delay-2000 top-1/3 left-1/2"></div>
+         <div className="absolute w-[70%] h-[70%] bg-purple-400/50 rounded-full filter blur-3xl animate-blob animation-delay-4000 top-1/2 left-1/4"></div>
+       </div>
 
-      {/* Top-right button */}
-      <div className="absolute top-6 right-6 z-50">
-        <HoverBorderGradientDemo />
-      </div>
+       {/* Top-right button */}
+       <div className="absolute top-6 right-6 z-50 flex justify-between items-center">
+         {/* Left-aligned: Role Selector */}
+         <select
+           value={role}
+           onChange={(e) => {
+             const selectedRole = e.target.value;
+             setRole(selectedRole);
+             localStorage.setItem("userRole", selectedRole); // ✅ Store in localStorage
+           }}
+           className="px-4 py-2 rounded border dark:bg-zinc-900 dark:text-white border-gray-300 shadow-sm focus:outline-none"
+         >
+           <option value="customer">Customer</option>
+           <option value="soc">SOC</option>
+         </select>
 
-      {/* Top-left lock icon */}
-      <div className="absolute top-6 left-6 z-50">
-        <img src="/lock.png" alt="lock" className="w-8 h-8" />
-      </div>
+         {/* Right-aligned: Your custom component */}
+         <HoverBorderGradientDemo />
+       </div>
 
-      {/* Main Globe Section */}
-      <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="div"
-        >
-          <h2
-            className="text-center text-1xl md:text-6xl font-bold text-black dark:text-white"
-            style={{ fontFamily: "'Press Start 2P', monospace" }}
-          >
-            Zero Trust
-          </h2>
+       {/* Top-left lock icon */}
+       <div className="absolute top-6 left-6 z-50">
+         <img src="/lock.png" alt="lock" className="w-8 h-8" />
+       </div>
 
-          <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto">
-            <TextGenerateEffectDemo />
-          </p>
-        </motion.div>
+       {/* Main Globe Section */}
+       <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4">
+         <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 1 }}
+           className="div"
+         >
+           <h2
+             className="text-center text-1xl md:text-6xl font-bold text-black dark:text-white"
+             style={{ fontFamily: "'Press Start 2P', monospace" }}
+           >
+             Zero Trust
+           </h2>
 
-        {/* Gradient overlay */}
-        <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-40" />
+           <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto">
+             <TextGenerateEffectDemo />
+           </p>
+         </motion.div>
 
-        {/* Globe */}
-        <div className="absolute w-full -bottom-20 h-7 md:h-full z-10">
-          <World data={sampleArcs} globeConfig={globeConfig} />
-        </div>
-      </div>
+         {/* Gradient overlay */}
+         <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-40" />
 
-      {/* Powered by Descope */}
-      <div className="absolute bottom-4 inset-x-0 flex justify-center z-50 px-1">
-        <p className="text-sm text-neutral-600 dark:text-neutral-300 flex items-center space-x-2">
-          <span>Powered by</span>
-          <img src="/descope-logo.png" alt="Descope" className="w-25 h-30 mt-2" />
-        </p>
-      </div>
-    </div>
-  );
+         {/* Globe */}
+         <div className="absolute w-full -bottom-20 h-7 md:h-full z-10">
+           <World data={sampleArcs} globeConfig={globeConfig} />
+         </div>
+       </div>
+
+       {/* Powered by Descope */}
+       <div className="absolute bottom-4 inset-x-0 flex justify-center z-50 px-1">
+         <p className="text-sm text-neutral-600 dark:text-neutral-300 flex items-center space-x-2">
+           <span>Powered by</span>
+           <img
+             src="/descope-logo.png"
+             alt="Descope"
+             className="w-25 h-30 mt-2"
+           />
+         </p>
+       </div>
+     </div>
+   );
 }
