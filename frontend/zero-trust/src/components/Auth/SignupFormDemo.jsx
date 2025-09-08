@@ -71,10 +71,18 @@ export function SignupFormDemo() {
                         JSON.stringify(e.detail.user)
                       );
 
-                      setMessage(
-                        isSignup ? "Signup successful!" : "Login successful!"
-                      );
-                      navigate("/dashboard"); // Redirect to dashboard
+                       const role =
+                         localStorage.getItem("userRole") || "customer"; // fallback to "customer"
+                       setMessage(
+                         isSignup ? "Signup successful!" : "Login successful!"
+                       );
+
+                       // Navigate based on role
+                       if (role === "soc") {
+                         navigate("/dashboard");
+                       } else {
+                         navigate("/integrateApi");
+                       } // Redirect to dashboard
                     }}
                     onError={(err) => {
                       console.error("Auth Error:", err);
