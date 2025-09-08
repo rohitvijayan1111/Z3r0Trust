@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-const backendUrl = import.meta.env.BACKEND;
 
 export function AlertsPage() {
   const [alertsData, setAlertsData] = useState([]);
-  const API_BASE = `${backendUrl}/api`;
+  const API_BASE = "http://127.0.0.1:5000/api";
 
   useEffect(() => {
     fetchAlerts();
