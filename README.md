@@ -135,11 +135,7 @@ flowchart LR
 * Maintains **MD5 hash cache** (alert\_name.username.ip.device) to prevent duplicate alerts.
 * Forwards validated anomalies to Responder Agent.
 
-### ⚡ Responder Agent
-
-* Validates alerts and enforces actions: block, suspend, logout, MFA enable.
-* Updates **Alerts DB**.
-* Coordinates with Mail Sender and Database Controller Agents.
+[Kaviyaraus](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)
 
 ### 📧 Mail Sender Agent
 
