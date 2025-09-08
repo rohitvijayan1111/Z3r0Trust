@@ -11,7 +11,7 @@ export function ApiIntegrationForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://127.0.0.1:5000/api/proxies/add", {
+      const res = await axios.post("http://127.0.0.1:5000/proxies/add", {
         client_name: clientName,
         client_url: clientUrl,
       });

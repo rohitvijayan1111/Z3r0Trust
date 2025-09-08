@@ -519,5 +519,5 @@ def data_exfiltration():
 
 
 if __name__ == "__main__":
-    data_exfiltration()
+    password_bruteforce()
 
