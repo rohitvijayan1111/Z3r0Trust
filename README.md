@@ -180,7 +180,7 @@ flowchart LR
 
 ---
 
-## 📂 Work Flow
+## 📂 Example Work Flow (Scenario Based)
 
 **Scenario:** Multiple failed logins → sudden success from a new device in Moscow.
 
