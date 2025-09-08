@@ -38,7 +38,6 @@ Unlike traditional SIEMs that only record events, Z3r0Trust combines **Descope-b
 * Secure exposed APIs via **Descope Inbound Apps**.
 
 ---
-![WhatsApp Image 2025-09-08 at 18 28 56_9c27b80c](https://github.com/user-attachments/assets/e0a441fb-fe6c-450c-b1e4-c240b50652fb)
 
 ## 📌 Problem
 
@@ -67,6 +66,7 @@ Z3r0Trust introduces a **coordinated system of specialized agents**, each with a
 * ✅ Delegation demonstrated when one agent acts on behalf of another (e.g., Responder → Mail Agent).
 * ✅ Descope Flows applied for user-facing consent (e.g., MFA, appeal approvals).
 
+![WhatsApp Image 2025-09-08 at 18 28 56_9c27b80c](https://github.com/user-attachments/assets/e0a441fb-fe6c-450c-b1e4-c240b50652fb)
 
 ### Key Features
 
@@ -97,6 +97,8 @@ flowchart LR
 ```
 
 ---
+
+![WhatsApp Image 2025-09-08 at 18 22 49_694ac8cd](https://github.com/user-attachments/assets/000c5550-b0ca-4785-96d2-bf742d9ada4c)
 
 ## 🤖 Agents
 
