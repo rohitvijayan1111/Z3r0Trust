@@ -358,6 +358,21 @@ Update .env values with actual keys from Descope and Groq.
   <img src="https://github.com/user-attachments/assets/43de869a-244d-4f6a-a312-60e2b7644b37" width="45%" />
 </p>
 
+## 🖥️ Prototype:
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/3240035c-b8b2-42f5-aac8-7aed1a0d5b3d" width="22%" />
+  <img src="https://github.com/user-attachments/assets/01c697a4-4ad0-4096-9c75-440b54aa0030" width="22%" />
+  <img src="https://github.com/user-attachments/assets/5b0611f4-3520-4495-9169-f37b8151bec4" width="22%" />
+  <img src="https://github.com/user-attachments/assets/5be65473-432d-4c61-af5c-15d64e65928e" width="22%" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c8f95d60-7e3d-4155-9875-a003af147a7b" width="30%" />
+  <img src="https://github.com/user-attachments/assets/7e51e676-a93e-4302-8120-92aebd92d4c8" width="30%" />
+  <img src="https://github.com/user-attachments/assets/ea3aaedd-f297-4bc7-94d6-9778ea8b2daa" width="30%" />
+</p>
+
 ---
 
 ## 🎥 PPT Link
@@ -391,11 +406,11 @@ Z3r0Trust is built to be both **technically robust** and **human-centric**:
 
 **Team Sentinel 5**  
 
-- RohitVijayan B : rohitvijayan1111@gmail.com (9986913189)  
-- Divakar G : divakar3501@gmail.com (6382547207)  
-- Rithik Raja S : rithikraja28.rr@gmail.com (9952276785)  
-- Gokul J : goku22028.it@rmkec.ac.in (9080639960)  
-- Kaviyarasu S : kavirajmetech@gmail.com (9360670658)  
+- RohitVijayan B : rohitvijayan1111@gmail.com (+91 9986913189)  
+- Divakar G : divakar3501@gmail.com (+91 6382547207)  
+- Rithik Raja S : rithikraja28.rr@gmail.com (+91 9952276785)  
+- Gokul J : goku22028.it@rmkec.ac.in (+91 9080639960)  
+- Kaviyarasu S : kavirajmetech@gmail.com (+91 9360670658)  
 
 
 
