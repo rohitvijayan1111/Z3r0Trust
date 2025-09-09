@@ -335,15 +335,19 @@ Update .env values with actual keys from Descope and Groq.
 📺 \[Insert Demo Video Link Here]
 
 ---
-## 📸 Snapshots
+### 📸 Snapshots
 
-Descope Inbound Apps:
+## Descope Inbound Apps:
 <img width="1919" height="876" alt="image" src="https://github.com/user-attachments/assets/48239b86-8538-4799-992e-bd42cc6df3bf" />
 
-Deploment Details:
-![WhatsApp Image 2025-09-09 at 11 17 39_4a8ea2c7](https://github.com/user-attachments/assets/58c505e2-25bd-4fbb-97db-82cdcb7f1278)
-![WhatsApp Image 2025-09-09 at 11 17 39_d71a7e42](https://github.com/user-attachments/assets/9aa6d181-510f-46be-a654-a1b6aac9c6bf)
-![WhatsApp Image 2025-09-09 at 11 20 49_ed400f4b](https://github.com/user-attachments/assets/7dba4a46-a472-47c4-80c4-1960c898adf2)
+## Deployment Details:
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/58c505e2-25bd-4fbb-97db-82cdcb7f1278" width="30%" />
+  <img src="https://github.com/user-attachments/assets/9aa6d181-510f-46be-a654-a1b6aac9c6bf" width="30%" />
+  <img src="https://github.com/user-attachments/assets/7dba4a46-a472-47c4-80c4-1960c898adf2" width="30%" />
+</p>
+
 
 
 ## 🎥 PPT Link
