@@ -338,7 +338,7 @@ Update .env values with actual keys from Descope and Groq.
 
 ### 🎥 Demo Video
 
-📺 \[Insert Demo Video Link Here]
+📺 \[[Z3R0 Trust - Trust Me, Always Verified (Prototype Video)](https://youtu.be/oAwjJabutoY)]
 
 ---
 ### 📸 Snapshots
