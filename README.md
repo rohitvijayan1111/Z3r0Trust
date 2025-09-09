@@ -79,9 +79,9 @@ Z3r0Trust introduces a *coordinated system of specialized agents*, each with a c
 
 ---
 
-### 🏗 Deployment Links(Working Prototype):
+### 🏗 Deployment Links (Working Prototype):
 
-    https://zero--trust.web.app/
+[Z3r0Trust Deployment](https://zero--trust.web.app/)
     
 
 ### With & Without Z3r0Trust
