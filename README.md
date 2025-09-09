@@ -389,6 +389,12 @@ Z3r0Trust is built to be both **technically robust** and **human-centric**:
 
 **Team Sentinel 5**
 
+RohitVijayan B : rohitvijayan1111@gmail.com (9986913189)
+Divakar G : divakar3501@gmail.com (6382547207)
+Rithik Raja S : rithikraja28.rr@gmail.com (9952276785)
+Gokul J : goku22028.it@rmkec.ac.in (9080639960)
+Kaviyarasu S : kavirajmetech@gmail.com (9360670658)
+
 
 
 
