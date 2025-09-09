@@ -78,6 +78,11 @@ Z3r0Trust introduces a *coordinated system of specialized agents*, each with a c
 
 ---
 
+### 🏗 Deployment Links(Working Prototype):
+
+    https://zero--trust.web.app/
+    
+
 ### With & Without Z3r0Trust
 
 ![WhatsApp Image 2025-09-08 at 18 28 56\_9c27b80c](https://github.com/user-attachments/assets/e0a441fb-fe6c-450c-b1e4-c240b50652fb)
@@ -330,7 +335,7 @@ Update .env values with actual keys from Descope and Groq.
 * **Cloud Services** – Google Console
 ---
 
-## 🎥 Demo Video
+### 🎥 Demo Video
 
 📺 \[Insert Demo Video Link Here]
 
@@ -343,11 +348,14 @@ Update .env values with actual keys from Descope and Groq.
 ## Deployment Details:
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/58c505e2-25bd-4fbb-97db-82cdcb7f1278" width="30%" />
-  <img src="https://github.com/user-attachments/assets/9aa6d181-510f-46be-a654-a1b6aac9c6bf" width="30%" />
-  <img src="https://github.com/user-attachments/assets/7dba4a46-a472-47c4-80c4-1960c898adf2" width="30%" />
+  <img src="https://github.com/user-attachments/assets/58c505e2-25bd-4fbb-97db-82cdcb7f1278" width="45%" />
+  <img src="https://github.com/user-attachments/assets/9aa6d181-510f-46be-a654-a1b6aac9c6bf" width="45%" />
 </p>
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7dba4a46-a472-47c4-80c4-1960c898adf2" width="45%" />
+  <img src="https://github.com/user-attachments/assets/43de869a-244d-4f6a-a312-60e2b7644b37" width="45%" />
+</p>
 
 
 ## 🎥 PPT Link
