@@ -29,10 +29,10 @@ We are **Sentinel 5**, a passionate team of developers and security innovators d
 
 ## 🎯 Hackathon Theme / Challenge Addressed
 
-**Global MCP Hackathon**
-**Theme 3:** Secure agent-to-agent communication with Descope
-**Theme:** Design How Agents Talk, Trust, and Team Up
-**Level:** Advanced
+**Global MCP Hackathon**  
+**Theme 3:** Secure agent-to-agent communication with Descope  
+**Theme:** Design How Agents Talk, Trust, and Team Up  
+**Level:** Advanced  
 
 **Challenges:**
 
