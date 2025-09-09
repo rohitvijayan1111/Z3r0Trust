@@ -185,7 +185,7 @@ flowchart LR
 4. **Mail MCP Agent** sends:
 
    * ✉ User-friendly alert to employee
-   * 📑 SOC email with forensic details + AI log summary
+   * 📑 SOC email with forensic details
 5. **SOC Analyst** validates the suspension.
 6. **Appeal Agent** reviews employee’s appeal, reinstates if legitimate.
 
