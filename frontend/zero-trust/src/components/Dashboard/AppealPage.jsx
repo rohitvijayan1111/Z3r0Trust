@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-  
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export function AppealPage() {
   const [appealsData, setAppealsData] = useState([]);
   const [selectedAppeal, setSelectedAppeal] = useState(null);
-  const API_BASE = "http://127.0.0.1:5000/api";
+  const API_BASE = `${backendUrl}/api`;
 
   useEffect(() => {
     fetchAppeals();
