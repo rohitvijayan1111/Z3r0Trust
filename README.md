@@ -29,6 +29,7 @@ We are **Sentinel 5**, a passionate team of developers and security innovators d
 
 ## 🎯 Hackathon Theme / Challenge Addressed
 
+**Global MCP Hackathon**
 **Theme 3:** Secure agent-to-agent communication with Descope
 **Theme:** Design How Agents Talk, Trust, and Team Up
 **Level:** Advanced
@@ -386,15 +387,15 @@ Z3r0Trust is built to be both **technically robust** and **human-centric**:
 
 ---
 
-## 📧 Contact
+## 📧 Contact  
 
-**Team Sentinel 5**
+**Team Sentinel 5**  
 
-RohitVijayan B : rohitvijayan1111@gmail.com (9986913189)
-Divakar G : divakar3501@gmail.com (6382547207)
-Rithik Raja S : rithikraja28.rr@gmail.com (9952276785)
-Gokul J : goku22028.it@rmkec.ac.in (9080639960)
-Kaviyarasu S : kavirajmetech@gmail.com (9360670658)
+- RohitVijayan B : rohitvijayan1111@gmail.com (9986913189)  
+- Divakar G : divakar3501@gmail.com (6382547207)  
+- Rithik Raja S : rithikraja28.rr@gmail.com (9952276785)  
+- Gokul J : goku22028.it@rmkec.ac.in (9080639960)  
+- Kaviyarasu S : kavirajmetech@gmail.com (9360670658)  
 
 
 
