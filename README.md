@@ -345,7 +345,7 @@ Update .env values with actual keys from Descope and Groq.
 ## Descope Inbound Apps:
 <img width="1919" height="876" alt="image" src="https://github.com/user-attachments/assets/48239b86-8538-4799-992e-bd42cc6df3bf" />
 
-## Deployment Details:
+## 🖥️Deployment Details:
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/58c505e2-25bd-4fbb-97db-82cdcb7f1278" width="45%" />
@@ -357,6 +357,7 @@ Update .env values with actual keys from Descope and Groq.
   <img src="https://github.com/user-attachments/assets/43de869a-244d-4f6a-a312-60e2b7644b37" width="45%" />
 </p>
 
+---
 
 ## 🎥 PPT Link
 
