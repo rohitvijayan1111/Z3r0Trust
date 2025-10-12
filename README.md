@@ -15,12 +15,8 @@ It acts as a **middleware security layer** for third-party applications, protect
 | **Project Name** | Z3r0Trust – Trust Me, Always Verified |
 | **Short Description** | An AI-driven, multi-agent framework leveraging **open-source identity management** for secure inter-agent communication, autonomous detection & response, and fair user management. |
 | **Team Name** | United Hackos |
-| **Team Members** | Rohit Vijayan B • Divakar G • Rithik Raja S • Gokul J • Kaviyarasu S |
 | **Hackathon / Domain** | Thales GenTech India Hackathon 2025 |
-| **Theme / Focus Areas** | Cybersecurity, Cloud Security, AI Model Safety, Threat Detection, Identity & Access Management |
-| **Key Tech Stack** | Descope, FastAPI, React, Splunk, MySQL, Python, Node.js |
 | **Thales Domains Addressed** | • Cloud & Infrastructure Security<br>• Data, Identity & Access Management<br>• Threat Detection & Incident Response<br>• AI & Autonomous Systems Security |
-| **Repository Status** | Prototype / MVP |
 
 ---
 
@@ -30,11 +26,11 @@ We are **United Hackos**, a passionate team of developers and security innovator
 Our expertise spans **full-stack development, cybersecurity, machine learning, DevOps, cloud computing, and UI/UX design**, enabling us to deliver scalable end-to-end solutions.
 
 **Team Members:**  
-- Rohit Vijayan B  
-- Divakar G  
-- Rithik Raja S  
-- Gokul J  
-- Kaviyarasu S  
+* [Rohit Vijayan B](https://www.linkedin.com/in/rohitvijayan1111/)  
+* [Divakar G](https://www.linkedin.com/in/divakar3501/)  
+* [Rithik Raja S](https://www.linkedin.com/in/rithik-raja-s/)  
+* [Gokul J](https://www.linkedin.com/in/gokul-jeyachandran-37a649229/)  
+* [Kaviyarasu S](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)  
 
 ---
 
