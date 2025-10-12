@@ -1,112 +1,109 @@
-# 🔐 Z3r0Trust – Trust Me, Always Verified
+# 🔐 Z3r0Trust – Trust Me, Always Verified  
 
-Z3r0Trust is an autonomous multi-agent security framework powered by Descope to safeguard enterprise systems against modern cyber threats. It continuously authenticates, detects, analyzes, responds, and manages suspicious activities — while ensuring transparency, fairness and SOC oversight.
+Z3r0Trust is an **autonomous multi-agent security framework** designed to safeguard enterprise and cloud-based systems against modern cyber threats. It continuously authenticates, detects, analyzes, responds, and manages suspicious activities — ensuring transparency, fairness, and SOC oversight powered by **open-source technologies**.  
 
-Unlike traditional SIEMs that only record events, Z3r0Trust combines Descope-based authentication & delegation, real-time log intelligence, autonomous response and human appeal workflows to create a resilient defense ecosystem.
+Unlike traditional SIEMs that only record events, **Z3r0Trust** integrates **open-source identity management**, **real-time log intelligence**, **autonomous response**, and **human appeal workflows** to build a **resilient, adaptive, and intelligent defense ecosystem**.  
 
-Descope acts as a middleware security layer for third-party applications, protecting them from brute force, credential stuffing, suspicious API usage, and more. Any third-party application integrating with Z3r0Trust creates a proxy URL that routes backend traffic through Z3r0Trust middleware. This ensures logs are captured, anomalies are detected, and malicious actors are blocked automatically.
+It acts as a **middleware security layer** for third-party applications, protecting them from brute force, credential stuffing, suspicious API usage, and more. Any application integrating with Z3r0Trust routes backend traffic through its middleware — ensuring logs are captured, anomalies detected, and malicious actors blocked automatically.  
 
 ---
 
-## 📛 Project Info
+## 📛 Project Info  
 
 **Project Name:** Z3r0Trust – Trust Me, Always Verified  
-**Short Description:** An AI-driven, multi-agent framework leveraging **Descope OAuth** for secure inter-agent communication, autonomous detection/response, and fair user management.
-
-## 👥 Team – Sentinel 5
-
-We are **Sentinel 5**, a passionate team of developers and security innovators dedicated to building resilient, human-centric cyber defense systems. Our expertise spans **full-stack development, cybersecurity, machine learning, DevOps, cloud computing, and UI/UX design**, enabling us to deliver scalable end-to-end solutions.
-
-**Team Members:**
-
-* [Rohit Vijayan B](https://www.linkedin.com/in/rohitvijayan1111/)
-* [Divakar G](https://www.linkedin.com/in/divakar3501/)
-* [Rithik Raja S](https://www.linkedin.com/in/rithik-raja-s/)
-* [Gokul J](https://www.linkedin.com/in/gokul-jeyachandran-37a649229/)
-* [Kaviyarasu S](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)
+**Short Description:** An AI-driven, multi-agent framework leveraging **open-source identity management** for secure inter-agent communication, autonomous detection and response, and fair user management.  
 
 ---
 
-## 🎯 Hackathon Theme / Challenge Addressed
+## 👥 Team – Sentinel 5  
 
-**Global MCP Hackathon**  
-**Theme 3:** Secure agent-to-agent communication with Descope  
-**Theme:** Design How Agents Talk, Trust, and Team Up  
-**Level:** Advanced  
+We are **Sentinel 5**, a passionate team of developers and security innovators dedicated to building resilient, human-centric cyber defense systems.  
+Our expertise spans **full-stack development, cybersecurity, machine learning, DevOps, cloud computing, and UI/UX design**, enabling us to deliver scalable end-to-end solutions.  
 
-**Challenges:**
-
-* Build a secure, multi-agent system where autonomous agents communicate across trust boundaries.
-* Include at least two agents with distinct scopes/roles.
-* Use **Descope** as the identity and access management layer for all agent communication.
-* Enforce **OAuth-based scoped access and delegated trust**.
-* Capture and replay **user consent** if agents operate on behalf of users.
-* Secure exposed APIs via **Descope Inbound Apps**.
+**Team Members:**  
+* [Rohit Vijayan B](https://www.linkedin.com/in/rohitvijayan1111/)  
+* [Divakar G](https://www.linkedin.com/in/divakar3501/)  
+* [Rithik Raja S](https://www.linkedin.com/in/rithik-raja-s/)  
+* [Gokul J](https://www.linkedin.com/in/gokul-jeyachandran-37a649229/)  
+* [Kaviyarasu S](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)  
 
 ---
 
-## 📌 Problem
+## 🎯 Hackathon Theme / Challenge Addressed  
 
-Enterprises face persistent challenges:
+**Hackathon:** Thales GenTech India Hackathon 2025  
+**Theme:** Cybersecurity – Creating smart solutions to protect India’s digital space, especially around cloud security, AI model safety, and threat detection.  
 
-* *Credential theft and phishing* are leading attack vectors.
-* *SOC teams are overwhelmed* by noisy or repetitive alerts.
-* *Slow response times* due to manual triage.
-* *Legitimate users often get blocked* unfairly without recourse.
-
-**Logs alone are not enough.**
-Z3r0Trust transforms raw events into *actionable security outcomes* with *autonomous containment and fair user handling*.
+**Evaluation Criteria:**  
+✅ Relevance of the solution to Thales domains  
+✅ Utilisation of open-source technology  
+✅ Adaptability to diverse scenarios  
+✅ Ease of design, extensibility, and scalability  
 
 ---
 
-## 🏗 Solution
+## 📌 Problem  
 
-Z3r0Trust introduces a *coordinated system of specialized agents*, each with a clear responsibility. All inter-agent communication is secured via **Descope OAuth tokens** with scoped access, ensuring strict trust boundaries.
+Enterprises and cloud environments face persistent challenges:  
+
+* Credential theft and phishing are leading attack vectors.  
+* SOC teams are overwhelmed by repetitive alerts.  
+* Manual triage causes slow incident responses.  
+* Legitimate users often face unfair account restrictions.  
+
+**Logs alone are not enough.**  
+Z3r0Trust converts raw data into actionable insights with autonomous containment and fair, AI-assisted user decisions.  
+
+---
+
+## 🏗 Solution  
+
+Z3r0Trust introduces a **coordinated system of specialized agents**, each with distinct responsibilities.  
+All inter-agent communication is secured through **open-source IAM** with scoped access, ensuring strict trust boundaries and delegated operations.  
 
 **Third-party integration flow:**
 
-* The 3rd-party app integrates with Z3r0Trust by creating a **proxy URL** inside Z3r0Trust.
-* All traffic flows through this middleware, where **Descope** authenticates and validates user attributes.
-* Logs are captured, anomalies detected, and malicious users are automatically blocked while legitimate access continues.
-
-### Guidelines Alignment
-
-* ✅ Z3r0Trust's agents with clearly defined roles interact using the access tokens generated by **Descope**, ensuring secure and trusted communication.
-* ✅ Descope used for all token generation, validation, and delegation.
-* ✅ Scope restrictions enforced on all protected endpoints.
-* ✅ Delegation demonstrated when one agent acts on behalf of another (e.g., Mail Agent handling alerts).
-* ✅ Descope Flows applied for user-facing consent (e.g., MFA, appeal approvals).
+* Third-party apps integrate via Z3r0Trust middleware proxy.  
+* Traffic is verified, authenticated, and enriched with user attributes.  
+* Logs are captured, anomalies detected, and malicious actions mitigated automatically.  
 
 ---
 
-### 🏗 Deployment Links (Working Prototype):
+### 🔒 Alignment with Thales Hackathon Goals  
 
-[Z3r0Trust Deployment](https://zero--trust.web.app/)
-    
-
-### With & Without Z3r0Trust
-
-![WhatsApp Image 2025-09-08 at 18 28 56\_9c27b80c](https://github.com/user-attachments/assets/e0a441fb-fe6c-450c-b1e4-c240b50652fb)
-
-### Key Features
-
-* 🔑 Authentication & validation via **Descope OAuth**
-* 📡 **Splunk real-time analytics** with anomaly detection
-* 🤖 **AI-powered log summarization** for SOC teams (less noise, faster context)
-* ⚡ Automated response: block, suspend, or monitor
-* 📬 Tiered email notifications: concise for users, forensic for SOC
-* 🧑‍💼 Human oversight through a **SOC dashboard**
-* 📝 Transparent appeal system for reinstatements
-* 📜 Immutable audit trails for compliance
+* ✅ Strengthens **cloud security** with agent-driven anomaly detection.  
+* ✅ Promotes **AI model safety** through autonomous, explainable responses.  
+* ✅ Utilizes **open-source tools** (Descope, Splunk, FastAPI, React).  
+* ✅ Scalable and adaptable to **multi-domain cybersecurity** use cases.  
+* ✅ Designed for **extensibility and integration** into enterprise ecosystems.  
 
 ---
 
-## 🏗 Architecture
+## 🏗 Deployment Links (Working Prototype)  
+
+🔗 [Z3r0Trust Deployment](https://zero--trust.web.app/)  
+
+---
+
+## 🔑 Key Features  
+
+* 🔒 Authentication & validation via **open-source IAM**  
+* 📡 **Splunk real-time analytics** for anomaly detection  
+* 🤖 **AI-powered log summarization** for SOC clarity  
+* ⚡ Automated response: block, suspend, or monitor  
+* 📬 Tiered notifications for users and SOC  
+* 🧑‍💼 Human oversight via a **SOC dashboard**  
+* 📝 Transparent appeal system for fair handling  
+* 📜 Immutable audit trails ensuring compliance  
+
+---
+
+## 🧩 Architecture  
 
 ```mermaid
 flowchart LR
-  A[User Login/Action] -->|Logs + Descope Auth| B[Detector Agent]
-  B -->|Attributes via Descope + Tokens| C[Analyser Agent]
+  A[User Login/Action] -->|Logs + Auth| B[Detector Agent]
+  B -->|Attributes + Tokens| C[Analyser Agent]
   C -->|Splunk HEC| D[Alert Handler Agent]
   D -->|Notify| E[Mail MCP Agent]
   D -->|DB Update| F[Database Controller Agent]
@@ -177,7 +174,7 @@ flowchart LR
 * If uncertain, escalates to **SOC Analyst**.
 * Updates DB and notifies user via Mail Sender.
 
-➡️ The last four agents (Alert Handler, Mail Sender, Database Controller, and Appeal Handler) communicate among themselves using secure access keys. If any third-party tries to access them without proper authorization, they are blocked instantly based on **Descope access key authentication**.
+➡️ The last four agents (Alert Handler, Mail Sender, Database Controller, and Appeal Handler) communicate among themselves using secure access keys. If any third party attempts to access them without proper authorization, they are instantly blocked through strict access key validation and security policies.
 
 ---
 
@@ -204,7 +201,7 @@ flowchart LR
 
 ## ⚙️ What We Built + How to Run It
 
-Z3r0Trust is a **multi-agent security system** powered by **Descope** and **Splunk**.
+Z3r0Trust is a **multi-agent security system** aligns with **Thales Domains**.
 
 ### Core Workflow
 
@@ -343,8 +340,6 @@ Update .env values with actual keys from Descope and Groq.
 ---
 ### 📸 Snapshots
 
-## Descope Inbound Apps:
-<img width="1919" height="876" alt="image" src="https://github.com/user-attachments/assets/48239b86-8538-4799-992e-bd42cc6df3bf" />
 
 ## 🖥️Deployment Details:
 
@@ -368,9 +363,10 @@ Update .env values with actual keys from Descope and Groq.
 </p>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/c8f95d60-7e3d-4155-9875-a003af147a7b" width="30%" />
-  <img src="https://github.com/user-attachments/assets/7e51e676-a93e-4302-8120-92aebd92d4c8" width="30%" />
-  <img src="https://github.com/user-attachments/assets/ea3aaedd-f297-4bc7-94d6-9778ea8b2daa" width="30%" />
+  <img src="https://github.com/user-attachments/assets/c8f95d60-7e3d-4155-9875-a003af147a7b" width="22%" />
+  <img src="https://github.com/user-attachments/assets/7e51e676-a93e-4302-8120-92aebd92d4c8" width="22%" />
+  <img src="https://github.com/user-attachments/assets/ea3aaedd-f297-4bc7-94d6-9778ea8b2daa" width="22%" />
+  <img src="https://github.com/user-attachments/assets/48239b86-8538-4799-992e-bd42cc6df3bf" width="22%" />
 </p>
 
 ---
