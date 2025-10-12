@@ -1,42 +1,57 @@
 # 🔐 Z3r0Trust – Trust Me, Always Verified  
 
-Z3r0Trust is an **autonomous multi-agent security framework** designed to safeguard enterprise and cloud-based systems against modern cyber threats. It continuously authenticates, detects, analyzes, responds, and manages suspicious activities — ensuring transparency, fairness, and SOC oversight powered by **open-source technologies**.  
+Z3r0Trust is an **autonomous multi-agent security framework** designed to safeguard enterprise and cloud-based systems against modern cyber threats. It continuously authenticates, detects, analyzes, responds, and manages suspicious activities — ensuring transparency, fairness, and SOC oversight powered by **open-source technologies**.
 
-Unlike traditional SIEMs that only record events, **Z3r0Trust** integrates **open-source identity management**, **real-time log intelligence**, **autonomous response**, and **human appeal workflows** to build a **resilient, adaptive, and intelligent defense ecosystem**.  
+Unlike traditional SIEMs that only record events, **Z3r0Trust** integrates **open-source identity management**, **real-time log intelligence**, **autonomous response**, and **human appeal workflows** to build a **resilient, adaptive, and intelligent defense ecosystem**.
 
-It acts as a **middleware security layer** for third-party applications, protecting them from brute force, credential stuffing, suspicious API usage, and more. Any application integrating with Z3r0Trust routes backend traffic through its middleware — ensuring logs are captured, anomalies detected, and malicious actors blocked automatically.  
+It acts as a **middleware security layer** for third-party applications, protecting them from brute force, credential stuffing, suspicious API usage, and more. Any application integrating with Z3r0Trust routes backend traffic through its middleware — ensuring logs are captured, anomalies detected, and malicious actors blocked automatically.
 
 ---
 
 ## 📛 Project Info  
 
-**Project Name:** Z3r0Trust – Trust Me, Always Verified  
-**Short Description:** An AI-driven, multi-agent framework leveraging **open-source identity management** for secure inter-agent communication, autonomous detection and response, and fair user management.  
+| Field | Description |
+|---|---|
+| **Project Name** | Z3r0Trust – Trust Me, Always Verified |
+| **Short Description** | An AI-driven, multi-agent framework leveraging **open-source identity management** for secure inter-agent communication, autonomous detection & response, and fair user management. |
+| **Team Name** | United Hackos |
+| **Team Members** | Rohit Vijayan B • Divakar G • Rithik Raja S • Gokul J • Kaviyarasu S |
+| **Hackathon / Domain** | Thales GenTech India Hackathon 2025 |
+| **Theme / Focus Areas** | Cybersecurity, Cloud Security, AI Model Safety, Threat Detection, Identity & Access Management |
+| **Key Tech Stack** | Descope, FastAPI, React, Splunk, MySQL, Python, Node.js |
+| **Thales Domains Addressed** | • Cloud & Infrastructure Security<br>• Data, Identity & Access Management<br>• Threat Detection & Incident Response<br>• AI & Autonomous Systems Security |
+| **Repository Status** | Prototype / MVP |
 
 ---
 
-## 👥 Team – Sentinel 5  
+## 👥 Team – United Hackos  
 
-We are **Sentinel 5**, a passionate team of developers and security innovators dedicated to building resilient, human-centric cyber defense systems.  
-Our expertise spans **full-stack development, cybersecurity, machine learning, DevOps, cloud computing, and UI/UX design**, enabling us to deliver scalable end-to-end solutions.  
+We are **United Hackos**, a passionate team of developers and security innovators dedicated to building resilient, human-centric cyber defense systems.  
+Our expertise spans **full-stack development, cybersecurity, machine learning, DevOps, cloud computing, and UI/UX design**, enabling us to deliver scalable end-to-end solutions.
 
 **Team Members:**  
-* [Rohit Vijayan B](https://www.linkedin.com/in/rohitvijayan1111/)  
-* [Divakar G](https://www.linkedin.com/in/divakar3501/)  
-* [Rithik Raja S](https://www.linkedin.com/in/rithik-raja-s/)  
-* [Gokul J](https://www.linkedin.com/in/gokul-jeyachandran-37a649229/)  
-* [Kaviyarasu S](https://www.linkedin.com/in/kaviyarasu-sivaraj-312893262/)  
+- Rohit Vijayan B  
+- Divakar G  
+- Rithik Raja S  
+- Gokul J  
+- Kaviyarasu S  
 
 ---
 
 ## 🎯 Hackathon Theme / Challenge Addressed  
 
 **Hackathon:** Thales GenTech India Hackathon 2025  
-**Theme:** Cybersecurity – Creating smart solutions to protect India’s digital space, especially around cloud security, AI model safety, and threat detection.  
+**Theme:** Cybersecurity – Creating smart solutions to protect India’s digital space, especially around **cloud security**, **AI model safety**, and **threat detection**.
+
+We specifically align with these Thales domains:  
+1. **Cloud & Infrastructure Security** — securing traffic, APIs, platform integrations  
+2. **Identity & Access Management (IAM)** — continuous authentication, scoped tokens, delegation  
+3. **Threat Detection & Incident Response** — anomaly detection, automated containment, alerting  
+4. **AI & Autonomous Systems Security** — explainable autonomous agents, fairness, human override  
 
 **Evaluation Criteria:**  
-✅ Relevance of the solution to Thales domains  
-✅ Utilisation of open-source technology  
+✅ Relevance to Thales domains  
+✅ Utilisation of open-source technologies  
 ✅ Adaptability to diverse scenarios  
 ✅ Ease of design, extensibility, and scalability  
 
@@ -44,38 +59,37 @@ Our expertise spans **full-stack development, cybersecurity, machine learning, D
 
 ## 📌 Problem  
 
-Enterprises and cloud environments face persistent challenges:  
+Enterprises and cloud environments face persistent challenges:
 
-* Credential theft and phishing are leading attack vectors.  
-* SOC teams are overwhelmed by repetitive alerts.  
-* Manual triage causes slow incident responses.  
-* Legitimate users often face unfair account restrictions.  
+- Credential theft and phishing are major attack vectors  
+- SOC teams are overwhelmed by repetitive alerts  
+- Manual triage causes slow incident responses  
+- Legitimate users often face unfair account restrictions  
 
-**Logs alone are not enough.**  
-Z3r0Trust converts raw data into actionable insights with autonomous containment and fair, AI-assisted user decisions.  
+Logs alone are not enough — Z3r0Trust converts raw data into actionable insights via autonomous containment and fair, AI-guided decisions.
 
 ---
 
 ## 🏗 Solution  
 
 Z3r0Trust introduces a **coordinated system of specialized agents**, each with distinct responsibilities.  
-All inter-agent communication is secured through **open-source IAM** with scoped access, ensuring strict trust boundaries and delegated operations.  
+All inter-agent communication is secured through **open-source IAM** with scoped access, ensuring strict trust boundaries and delegated operations.
 
 **Third-party integration flow:**
 
-* Third-party apps integrate via Z3r0Trust middleware proxy.  
-* Traffic is verified, authenticated, and enriched with user attributes.  
-* Logs are captured, anomalies detected, and malicious actions mitigated automatically.  
+- Third-party apps integrate via Z3r0Trust middleware proxy  
+- Traffic is verified, authenticated, and enriched with user attributes  
+- Logs are captured, anomalies detected, and malicious actions mitigated automatically  
 
 ---
 
 ### 🔒 Alignment with Thales Hackathon Goals  
 
-* ✅ Strengthens **cloud security** with agent-driven anomaly detection.  
-* ✅ Promotes **AI model safety** through autonomous, explainable responses.  
-* ✅ Utilizes **open-source tools** (Descope, Splunk, FastAPI, React).  
-* ✅ Scalable and adaptable to **multi-domain cybersecurity** use cases.  
-* ✅ Designed for **extensibility and integration** into enterprise ecosystems.  
+- ✅ Strengthens **cloud security** via agent-driven anomaly detection  
+- ✅ Promotes **AI model safety** through autonomous, explainable responses  
+- ✅ Utilizes **open-source tools** (Descope, Splunk, FastAPI, React)  
+- ✅ Scalable and adaptable to **multi-domain cybersecurity** use cases  
+- ✅ Designed for **extensibility and integration** into enterprise ecosystems  
 
 ---
 
@@ -87,14 +101,14 @@ All inter-agent communication is secured through **open-source IAM** with scoped
 
 ## 🔑 Key Features  
 
-* 🔒 Authentication & validation via **open-source IAM**  
-* 📡 **Splunk real-time analytics** for anomaly detection  
-* 🤖 **AI-powered log summarization** for SOC clarity  
-* ⚡ Automated response: block, suspend, or monitor  
-* 📬 Tiered notifications for users and SOC  
-* 🧑‍💼 Human oversight via a **SOC dashboard**  
-* 📝 Transparent appeal system for fair handling  
-* 📜 Immutable audit trails ensuring compliance  
+- 🔒 Authentication & validation via **open-source IAM**  
+- 📡 **Splunk real-time analytics** for anomaly detection  
+- 🤖 **AI-powered log summarization** for SOC clarity  
+- ⚡ Automated response: block, suspend, or monitor  
+- 📬 Tiered notifications for users and SOC  
+- 🧑‍💼 Human oversight via a **SOC dashboard**  
+- 📝 Transparent appeal system for fair handling  
+- 📜 Immutable audit trails ensuring compliance  
 
 ---
 
