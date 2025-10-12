@@ -16,7 +16,7 @@ It acts as a **middleware security layer** for third-party applications, protect
 | **Short Description** | An AI-driven, multi-agent framework leveraging **open-source identity management** for secure inter-agent communication, autonomous detection & response, and fair user management. |
 | **Team Name** | United Hackos |
 | **Hackathon / Domain** | Thales GenTech India Hackathon 2025 |
-| **Thales Domains Addressed** | Data, Identity & Access Management (Descope)  <br>• Threat Detection & Incident Response<br>• AI & Autonomous Systems Security |
+| **Thales Domains Addressed** | • Data, Identity & Access Management (Descope)  <br>• Threat Detection & Incident Response<br>• AI & Autonomous Systems Security |
 
 ---
 
