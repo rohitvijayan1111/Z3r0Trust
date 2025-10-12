@@ -4,7 +4,7 @@ Z3r0Trust is an **autonomous multi-agent security framework** designed to safegu
 
 Unlike traditional SIEMs that only record events, **Z3r0Trust** integrates **open-source identity management**, **real-time log intelligence**, **autonomous response**, and **human appeal workflows** to build a **resilient, adaptive, and intelligent defense ecosystem**.
 
-It acts as a **middleware security layer** for third-party applications, protecting them from brute force, credential stuffing, suspicious API usage, and more. Any application integrating with Z3r0Trust routes backend traffic through its middleware — ensuring logs are captured, anomalies detected, and malicious actors blocked automatically.
+It acts as a **middleware security layer** for third-party applications, protecting them from brute force, credential stuffing, suspicious API usage, and more. Any application integrating with Z3r0Trust routes backend traffic through its middleware, ensuring logs are captured, anomalies detected, and malicious actors blocked automatically.
 
 ---
 
