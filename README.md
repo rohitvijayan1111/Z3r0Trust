@@ -16,7 +16,7 @@ It acts as a **middleware security layer** for third-party applications, protect
 | **Short Description** | An AI-driven, multi-agent framework leveraging **open-source identity management** for secure inter-agent communication, autonomous detection & response, and fair user management. |
 | **Team Name** | United Hackos |
 | **Hackathon / Domain** | Thales GenTech India Hackathon 2025 |
-| **Thales Domains Addressed** | • Cloud & Infrastructure Security<br>• Data, Identity & Access Management<br>• Threat Detection & Incident Response<br>• AI & Autonomous Systems Security |
+| **Thales Domains Addressed** | Data, Identity & Access Management (Descope)  <br>• Threat Detection & Incident Response<br>• AI & Autonomous Systems Security |
 
 ---
 
@@ -40,10 +40,9 @@ Our expertise spans **full-stack development, cybersecurity, machine learning, D
 **Theme:** Cybersecurity – Creating smart solutions to protect India’s digital space, especially around **cloud security**, **AI model safety**, and **threat detection**.
 
 We specifically align with these Thales domains:  
-1. **Cloud & Infrastructure Security** — securing traffic, APIs, platform integrations  
-2. **Identity & Access Management (IAM)** — continuous authentication, scoped tokens, delegation  
-3. **Threat Detection & Incident Response** — anomaly detection, automated containment, alerting  
-4. **AI & Autonomous Systems Security** — explainable autonomous agents, fairness, human override  
+1. **Identity & Access Management (IAM)** — continuous authentication, scoped tokens, delegation(Descope)  
+2. **Threat Detection & Incident Response** — anomaly detection, automated containment, alerting  
+3. **AI & Autonomous Systems Security** — explainable autonomous agents, fairness, human override  
 
 **Evaluation Criteria:**  
 ✅ Relevance to Thales domains  
