@@ -1,6 +1,6 @@
 # 🔐 Z3r0Trust – Trust Me, Always Verified  
 
-Z3r0Trust is an **autonomous multi-agent security framework** designed to safeguard enterprise and cloud-based systems against modern cyber threats. It continuously authenticates, detects, analyzes, responds, and manages suspicious activities — ensuring transparency, fairness, and SOC oversight powered by **open-source technologies**.
+Z3r0Trust is an **autonomous multi-agent security framework** designed to safeguard enterprise and cloud-based systems against modern cyber threats. It continuously authenticates, detects, analyzes, responds, and manages suspicious activities - ensuring transparency, fairness, and SOC oversight powered by **open-source technologies**.
 
 Unlike traditional SIEMs that only record events, **Z3r0Trust** integrates **open-source identity management**, **real-time log intelligence**, **autonomous response**, and **human appeal workflows** to build a **resilient, adaptive, and intelligent defense ecosystem**.
 
