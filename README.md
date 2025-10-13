@@ -344,7 +344,7 @@ Update .env values with actual keys from Descope and Groq.
 
 ### 🎥 Demo Video
 
-📺 \[[Z3R0 Trust - Trust Me, Always Verified (Prototype Video)](https://youtu.be/oAwjJabutoY)]
+📺 \[[Z3R0 Trust - Trust Me, Always Verified (Prototype Video)](https://youtu.be/tsEXXqbLQHA?si=IQoiJvVkpkC7w1Bk)]
 
 ---
 ### 📸 Snapshots
